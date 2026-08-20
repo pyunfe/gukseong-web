@@ -6,6 +6,8 @@
     <title>알리미 - 국성국어</title>
     
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <!-- 💡 Supabase 연동 라이브러리 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         body { font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; overflow-x: hidden; scroll-behavior: smooth; }
@@ -57,7 +59,10 @@
         .sidebar-menu a:hover { background-color: #f8f9fa; color: #9e2a2b; }
         .sidebar-menu a.active { background-color: #fcf6f6; color: #9e2a2b; font-weight: 800; }
 
-        .page-content { flex: 1; min-width: 0; }
+        .page-content { flex: 1; min-width: 0; position: relative; }
+
+        /* 💡 로딩 오버레이 추가 */
+        .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: flex-start; padding-top: 100px; z-index: 10; font-size: 1.2rem; font-weight: 700; color: #9e2a2b; display: none; }
 
         /* ================= 게시판 디자인 (카드뉴스형 3단 그리드) ================= */
         .board-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid #1a1a1a; }
@@ -78,7 +83,7 @@
         .post-card:hover .post-overlay { opacity: 1; }
         .post-overlay span { color: #fff; font-size: 1.1rem; font-weight: 800; border: 2px solid #fff; padding: 8px 16px; border-radius: 30px; background: rgba(0,0,0,0.3); }
 
-        /* 💡 관리자 컨트롤 (이동 및 삭제 버튼) */
+        /* 💡 관리자 컨트롤 (삭제 버튼) */
         .admin-controls { position: absolute; top: 10px; right: 10px; display: none; gap: 4px; z-index: 10; }
         .post-card:hover .admin-controls.admin-mode { display: flex; }
         .btn-ctrl { background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 4px; padding: 6px 10px; font-size: 0.85rem; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background 0.2s; }
@@ -89,7 +94,7 @@
         .empty-post { grid-column: 1 / -1; text-align: center; padding: 80px 0; color: #888; font-size: 1.1rem; background: #fff; border-radius: 8px; border: 1px solid #eaeaea; }
 
         /* ================= 관리자 입력 폼 (숨김) ================= */
-        .admin-form-container { display: none; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eaeaea; margin-bottom: 40px; }
+        .admin-form-container { display: none; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eaeaea; margin-bottom: 40px; position: relative; }
         .admin-form-container h3 { margin-top: 0; color: #9e2a2b; font-size: 1.4rem; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
         
         .admin-help-text { font-size: 0.9rem; color: #666; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; border-left: 4px solid #333; }
@@ -200,6 +205,9 @@
         </aside>
 
         <main class="page-content">
+            <!-- 💡 로딩 화면 -->
+            <div id="boardLoading" class="loading-overlay">알리미 데이터를 불러오는 중입니다...</div>
+            
             <div class="board-header">
                 <h3 class="board-title">알리미</h3>
                 <button class="btn-write" id="btnWrite">게시글 관리</button>
@@ -209,13 +217,13 @@
             <div class="admin-form-container" id="adminForm">
                 <h3>새 카드뉴스 등록</h3>
                 <div class="admin-help-text">
-                    <strong>💡 이미지 첨부 꿀팁 (깃허브 용량 절약)</strong><br>
-                    폴더에 사진을 저장할 필요 없이, 네이버 블로그에 올리신 카드뉴스 사진을 <strong>마우스 우클릭 -> '이미지 주소 복사'</strong> 하신 후 아래 첫 번째 칸에 붙여넣기만 하시면 됩니다!
+                    <strong>💡 이미지 업로드 방법</strong><br>
+                    깃허브에 올리신 영문 파일명(예: <strong>alert_01.jpg</strong>)을 첫 번째 칸에 적어주세요!
                 </div>
                 
                 <div class="admin-input-group">
-                    <label>1. 카드뉴스 이미지 주소 (URL)</label>
-                    <input type="text" id="postImage" placeholder="복사한 이미지 주소를 붙여넣으세요. (예: https://blogfiles.pstatic.net/...)">
+                    <label>1. 깃허브 이미지 파일명</label>
+                    <input type="text" id="postImage" placeholder="예: alert_01.jpg">
                 </div>
                 <div class="admin-input-group">
                     <label>2. 클릭 시 이동할 링크 (URL)</label>
@@ -247,7 +255,7 @@
         </div>
     </footer>
 
-    <!-- 알리미 관리자 로직 스크립트 -->
+    <!-- 알리미 관리자 로직 스크립트 (Supabase 버전) -->
     <script>
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
@@ -261,94 +269,94 @@
             }
         });
 
-        const initialPosts = [];
-
-        function getPosts() {
-            const localData = JSON.parse(localStorage.getItem('gukseongAlerts')) || [];
-            return [...initialPosts, ...localData]; 
-        }
-
-        function saveLocalPost(post) {
-            const localData = JSON.parse(localStorage.getItem('gukseongAlerts')) || [];
-            localData.push(post);
-            localStorage.setItem('gukseongAlerts', JSON.stringify(localData));
-        }
+        // 💡 Supabase 접속 정보
+        const SUPABASE_URL = 'https://haaiwbjdlqwrfrvsurxi.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhYWl3YmpkbHF3cmZydnN1cnhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MTQ1NjQsImV4cCI6MjEwMjA5MDU2NH0.hiMuLbrgkF2W_-PR5dfwmqI2TAOLi3yJv25_iCMovFE';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const postGrid = document.getElementById('postGrid');
         const adminForm = document.getElementById('adminForm');
+        const boardLoading = document.getElementById('boardLoading');
         let isAdmin = false;
+        let globalPosts = [];
 
+        // 💡 서버에서 데이터 불러오기 (최신순)
+        async function fetchPosts() {
+            boardLoading.style.display = 'flex';
+            try {
+                const { data, error } = await _supabase
+                    .from('gukseong_alerts')
+                    .select('*')
+                    .order('created_at', { ascending: false }); // 최신글이 먼저 오도록 정렬
+                
+                if (error) throw error;
+                globalPosts = data;
+                renderPosts();
+            } catch (err) {
+                console.error('알리미 불러오기 실패:', err);
+                globalPosts = [];
+                renderPosts();
+            } finally {
+                boardLoading.style.display = 'none';
+            }
+        }
+
+        // 화면에 게시글 그리기
         function renderPosts() {
-            const posts = getPosts();
             postGrid.innerHTML = '';
 
-            if (posts.length === 0) {
+            if (globalPosts.length === 0) {
                 postGrid.innerHTML = '<div class="empty-post">등록된 알리미가 없습니다.</div>';
                 return;
             }
 
-            posts.slice().reverse().forEach((post, index) => {
-                const isLocal = index < (posts.length - initialPosts.length); 
-                const localDataStr = localStorage.getItem('gukseongAlerts');
-                const localDataObj = localDataStr ? JSON.parse(localDataStr) : [];
-                const localIndex = isLocal ? (localDataObj.length - 1 - index) : -1;
-                
+            globalPosts.forEach((post) => {
                 const card = document.createElement('a');
                 card.className = 'post-card';
-                card.href = post.link || '#';
+                card.href = post.link_url || '#';
                 card.target = "_blank"; 
                 
                 let adminHtml = '';
-                if (isAdmin && isLocal) {
-                    const isVisualFirst = (localIndex === localDataObj.length - 1);
-                    const isVisualLast = (localIndex === 0);
-                    
+                if (isAdmin) {
                     adminHtml = `
                         <div class="admin-controls admin-mode">
-                            ${!isVisualFirst ? `<button class="btn-ctrl" onclick="movePost(${localIndex}, 'left', event)">◀</button>` : ''}
-                            ${!isVisualLast ? `<button class="btn-ctrl" onclick="movePost(${localIndex}, 'right', event)">▶</button>` : ''}
-                            <button class="btn-ctrl del" onclick="deletePost(${localIndex}, event)">삭제</button>
+                            <button class="btn-ctrl del" onclick="deletePost(${post.id}, event)">삭제</button>
                         </div>
                     `;
                 }
 
                 card.innerHTML = `
                     ${adminHtml}
-                    <div class="post-thumb" style="background-image: url('${post.image}');"></div>
+                    <div class="post-thumb" style="background-image: url('${post.image_url}');"></div>
                     <div class="post-overlay"><span>바로가기 ↗</span></div>
                 `;
                 postGrid.appendChild(card);
             });
         }
 
-        // 💡 순서 이동 기능 추가
-        window.movePost = function(index, direction, event) {
-            event.preventDefault();
-            event.stopPropagation();
-            const localData = JSON.parse(localStorage.getItem('gukseongAlerts')) || [];
-            
-            if (direction === 'left' && index < localData.length - 1) {
-                let temp = localData[index];
-                localData[index] = localData[index + 1];
-                localData[index + 1] = temp;
-            } else if (direction === 'right' && index > 0) {
-                let temp = localData[index];
-                localData[index] = localData[index - 1];
-                localData[index - 1] = temp;
-            }
-            
-            localStorage.setItem('gukseongAlerts', JSON.stringify(localData));
-            renderPosts();
-        }
-
-        window.deletePost = function(index, event) {
+        // 💡 서버에서 데이터 삭제 연동
+        window.deletePost = async function(id, event) {
             event.preventDefault(); 
             event.stopPropagation();
-            if (confirm("이 카드뉴스를 삭제하시겠습니까?")) {
-                const localData = JSON.parse(localStorage.getItem('gukseongAlerts')) || [];
-                localData.splice(index, 1);
-                localStorage.setItem('gukseongAlerts', JSON.stringify(localData));
-                renderPosts();
+            
+            if (confirm("이 카드뉴스를 정말 삭제하시겠습니까? (서버에서 영구 삭제됩니다)")) {
+                boardLoading.style.display = 'flex';
+                try {
+                    const { error } = await _supabase
+                        .from('gukseong_alerts')
+                        .delete()
+                        .eq('id', id);
+                    
+                    if (error) throw error;
+                    
+                    // 삭제 성공 시 데이터 다시 불러오고 리스트 갱신
+                    await fetchPosts();
+                } catch (err) {
+                    console.error('삭제 실패:', err);
+                    alert("삭제 중 오류가 발생했습니다.");
+                } finally {
+                    boardLoading.style.display = 'none';
+                }
             }
         }
 
@@ -378,25 +386,41 @@
             document.getElementById('postLink').value = '';
         });
 
-        document.getElementById('btnSave').addEventListener('click', () => {
+        // 💡 서버에 새 게시글 등록 연동
+        document.getElementById('btnSave').addEventListener('click', async () => {
             const image = document.getElementById('postImage').value.trim();
             const link = document.getElementById('postLink').value.trim();
 
             if (!image || !link) {
-                alert("이미지 주소와 이동할 링크를 모두 입력해주세요.");
+                alert("이미지 파일명과 이동할 링크를 모두 입력해주세요.");
                 return;
             }
 
-            saveLocalPost({ image: image, link: link });
-
-            document.getElementById('postImage').value = '';
-            document.getElementById('postLink').value = '';
-            
-            alert("성공적으로 등록되었습니다.");
-            renderPosts();
+            boardLoading.style.display = 'flex';
+            try {
+                const { error } = await _supabase
+                    .from('gukseong_alerts')
+                    .insert([{ image_url: image, link_url: link }]);
+                
+                if (error) throw error;
+                
+                document.getElementById('postImage').value = '';
+                document.getElementById('postLink').value = '';
+                alert("성공적으로 등록되었습니다.");
+                
+                // 등록 성공 시 데이터 다시 불러오기
+                await fetchPosts();
+            } catch (err) {
+                console.error('등록 오류:', err);
+                alert("등록 중 오류가 발생했습니다. (테이블이 생성되었는지 확인해주세요.)");
+            } finally {
+                boardLoading.style.display = 'none';
+            }
         });
 
-        renderPosts();
+        // 페이지 로드 시 초기 실행 (데이터 불러오기)
+        fetchPosts();
+
     </script>
 </body>
 </html>
