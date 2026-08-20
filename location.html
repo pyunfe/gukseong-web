@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오시는 길 - 국성국어</title>
+    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
+    <style>
+        body { font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; overflow-x: hidden; }
+
+        /* ================= 공통 레이아웃 ================= */
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 100px; background-color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; box-sizing: border-box; z-index: 1000; }
+        .nav-logo img { height: 80px; }
+        .nav-right { display: flex; align-items: center; gap: 40px; }
+        .nav-menu { display: flex; list-style: none; gap: 30px; margin: 0; padding: 0; align-items: center; }
+        .nav-menu li { position: relative; }
+        .nav-menu li > a { color: #333; text-decoration: none; font-size: 1.05rem; font-weight: 700; transition: color 0.3s ease; display: block; padding: 10px 0; }
+        .nav-menu li > a:hover { color: #9e2a2b; }
+        
+        .dropdown-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background-color: white; min-width: 160px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-radius: 8px; padding: 10px 0; list-style: none; margin: 0; z-index: 1001; }
+        .nav-menu li:hover .dropdown-menu { display: block; }
+        .dropdown-menu li { width: 100%; text-align: center; }
+        .dropdown-menu li a { color: #333 !important; padding: 10px 20px; font-size: 0.95rem; font-weight: 600; }
+        .dropdown-menu li a:hover { background-color: #f8f9fa; color: #9e2a2b !important; }
+
+        .nav-contact { display: flex; align-items: center; color: white; font-size: 1.1rem; font-weight: 700; background-color: #9e2a2b; padding: 10px 20px; border-radius: 30px; transition: all 0.3s ease; }
+
+        /* ================= 우측 고정 퀵 메뉴 ================= */
+        .quick-menu { position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .quick-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 80px; height: 90px; text-decoration: none; border-radius: 16px 0 0 16px; box-shadow: -3px 3px 12px rgba(0,0,0,0.18); transition: transform 0.3s ease, filter 0.3s ease; box-sizing: border-box; text-align: center; padding: 10px 5px; }
+        .quick-btn:hover { transform: translateX(-5px); filter: brightness(0.95); }
+        .quick-icon { width: 38px; height: 38px; object-fit: contain; margin-bottom: 6px; }
+
+        .naver-btn { background-color: #2bc381; }
+        .naver-text { color: #ffffff; font-size: 0.75rem; font-weight: 700; line-height: 1.2; }
+        .kakao-btn { background-color: #FEE500; }
+        .kakao-text { color: #3a1d1d; font-size: 0.75rem; font-weight: 800; line-height: 1.2; }
+
+        /* ================= 하단 푸터 ================= */
+        .site-footer { background-color: #000000; color: #aaa; padding: 40px 20px 30px 20px; font-size: 0.9rem; line-height: 1.6; margin-top: 50px; }
+        .footer-inner { max-width: 1200px; margin: 0 auto; }
+        .footer-info { color: #ccc; font-size: 0.92rem; margin-bottom: 25px; word-break: keep-all; }
+        .footer-copyright { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 20px; color: #888; font-size: 0.85rem; }
+
+        /* ================= 서브페이지 공통 배너 ================= */
+        .sub-header { width: 100%; height: 280px; background-color: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 100px; position: relative; background-image: url('sub_bg.jpg'); background-size: cover; background-position: center; text-align: center; }
+        .sub-header::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.55); z-index: 1; }
+        .sub-header-content { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 6px; padding: 0 20px; }
+        .sub-header-top-text { color: #ffffff; font-size: 1.2rem; font-weight: 500; letter-spacing: 2px; opacity: 0.9; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .sub-header h2 { color: #ffffff; font-size: 2.6rem; font-weight: 900; margin: 0; letter-spacing: 1px; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+
+        /* ================= 사이드바(LNB) + 본문 분할 레이아웃 ================= */
+        .page-wrapper { max-width: 1200px; margin: 80px auto; padding: 0 20px; display: flex; gap: 50px; align-items: flex-start; }
+        
+        .sidebar { width: 250px; flex-shrink: 0; background: #fff; border: 1px solid #eaeaea; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .sidebar-title { background-color: #1a1a1a; color: #fff; font-size: 1.4rem; font-weight: 800; text-align: center; padding: 25px 0; margin: 0; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li { border-bottom: 1px solid #eaeaea; }
+        .sidebar-menu li:last-child { border-bottom: none; }
+        .sidebar-menu a { display: block; padding: 18px 20px; color: #555; text-decoration: none; font-size: 1.05rem; font-weight: 600; transition: all 0.3s ease; }
+        .sidebar-menu a:hover { background-color: #f8f9fa; color: #9e2a2b; }
+        .sidebar-menu a.active { background-color: #fcf6f6; color: #9e2a2b; font-weight: 800; }
+
+        .page-content { flex: 1; min-width: 0; }
+
+        /* ================= 오시는 길 본문 ================= */
+        .section-title { text-align: center; font-size: 2rem; font-weight: 800; color: #1a1a1a; margin-top: 0; margin-bottom: 40px; }
+        .section-title span { color: #9e2a2b; }
+
+        .location-wrapper { display: flex; flex-direction: column; gap: 40px; width: 100%; }
+        
+        /* 💡 box-sizing 추가하여 너비 오차 완벽 해결 */
+        .map-container { width: 100%; background-color: #fff; padding: 10px; border-radius: 8px; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+        .map-container iframe, .root_daum_roughmap { width: 100%; border: none; }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; box-sizing: border-box; width: 100%; }
+        
+        /* 💡 box-sizing 추가하여 너비 오차 완벽 해결 */
+        .info-box { background: #fff; padding: 30px 25px; border-radius: 8px; border: 1px solid #eee; box-shadow: 0 5px 20px rgba(0,0,0,0.03); box-sizing: border-box; }
+        .info-box h4 { font-size: 1.3rem; font-weight: 800; margin: 0 0 20px 0; color: #1a1a1a; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f1f1f1; padding-bottom: 15px; }
+        .info-box h4 svg { width: 22px; height: 22px; fill: #9e2a2b; }
+        
+        .info-content p { font-size: 1rem; color: #444; line-height: 1.8; margin: 0 0 10px 0; word-break: keep-all; }
+        .info-content strong { color: #9e2a2b; display: inline-block; width: 70px; }
+
+        @media (max-width: 992px) {
+            .page-wrapper { flex-direction: column; gap: 40px; margin: 50px auto; }
+            .sidebar { width: 100%; }
+            .sidebar-menu { display: flex; flex-wrap: wrap; }
+            .sidebar-menu li { flex: 1 1 50%; border-right: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
+            .sidebar-menu li:nth-child(even) { border-right: none; }
+            .sidebar-menu a { text-align: center; padding: 12px 10px; font-size: 0.95rem; }
+            
+            .info-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 20px; }
+            .nav-menu { display: none; }
+            .nav-contact { font-size: 0.95rem; padding: 8px 15px; }
+            .sub-header-top-text { font-size: 0.9rem; }
+            .sub-header h2 { font-size: 1.8rem; }
+            .quick-btn { width: 65px; height: 75px; padding: 8px 4px; }
+            .quick-icon { width: 28px; height: 28px; margin-bottom: 4px; }
+            .naver-text, .kakao-text { font-size: 0.65rem; }
+            
+            .info-box { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo"><img src="logo_black.png" alt="로고"></a>
+        <div class="nav-right">
+            <ul class="nav-menu">
+                <li><a href="history.html">학원 소개 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="history.html">인사말/연혁</a></li>
+                        <li><a href="features.html">학원 특징</a></li>
+<li><a href="system.html">학습 시스템</a></li>
+                        <li><a href="staff.html">교직원</a></li>
+                        <li><a href="location.html">오시는 길</a></li>
+                    </ul>
+                </li>
+                <li><a href="policy.html">학칙 안내</a></li>
+                <li><a href="schedule.html">학원 일정</a></li>
+                <li>
+                    <a href="timetable_mid.html">시간표 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="timetable_mid.html">중등부</a></li>
+                        <li><a href="timetable_high.html">고등부</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="notice_alert.html">공지사항 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="notice_alert.html">알리미</a></li>
+                        <li><a href="notice_special.html">특강</a></li></ul>
+                </li>
+            </ul>
+            <div class="nav-contact">상담문의 📞 032-568-9565</div>
+        </div>
+    </nav>
+
+    <div class="quick-menu">
+        <a href="https://blog.naver.com/econ555" target="_blank" class="quick-btn naver-btn">
+            <img src="icon_blog.png" alt="블로그 아이콘" class="quick-icon">
+            <span class="naver-text">네이버<br>블로그</span>
+        </a>
+        <a href="http://pf.kakao.com/_xaKZXX" target="_blank" class="quick-btn kakao-btn">
+            <img src="icon_kakao.png" alt="카카오톡 아이콘" class="quick-icon">
+            <span class="kakao-text">카카오톡<br>채널</span>
+        </a>
+    </div>
+
+    <div class="sub-header">
+        <div class="sub-header-content">
+            <span class="sub-header-top-text">1등급으로 가는 가장 빠른 길</span>
+            <h2>국성국어</h2>
+        </div>
+    </div>
+
+    <!-- 좌우 분할 레이아웃 -->
+    <div class="page-wrapper">
+        
+        <!-- 좌측 사이드바 -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">학원 소개</h2>
+            <ul class="sidebar-menu">
+                <li><a href="history.html">인사말/연혁</a></li>
+                <li><a href="features.html">학원 특징</a></li>
+<li><a href="system.html">학습 시스템</a></li>
+                <li><a href="staff.html">교직원</a></li>
+                <!-- 💡 현재 페이지 활성화 -->
+                <li><a href="location.html" class="active">오시는 길</a></li>
+            </ul>
+        </aside>
+
+        <!-- 우측 본문 -->
+        <main class="page-content">
+            <div class="section-title">국성국어전문학원 <span>오시는 길</span></div>
+            
+            <div class="location-wrapper">
+                <!-- 지도 영역 -->
+                <div class="map-container" style="height: 400px;">
+                    <div id="daumRoughmapContainer1786707362535" class="root_daum_roughmap root_daum_roughmap_landing" style="width: 100%; height: 100%;"></div>
+                    <script charset="UTF-8" class="daum_roughmap_loader_script" src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js"></script>
+                    <script charset="UTF-8">
+                        new daum.roughmap.Lander({
+                            "timestamp" : "1786707362535",
+                            "key" : "skb7no9kbcz",
+                            "mapWidth" : "100%",
+                            "mapHeight" : "380"
+                        }).render();
+                    </script>
+                </div>
+
+                <!-- 하단 상세 정보 영역 -->
+                <div class="info-grid">
+                    <div class="info-box">
+                        <h4>
+                            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            주소 및 연락처
+                        </h4>
+                        <div class="info-content">
+                            <p style="display: flex;">
+                                <strong style="flex-shrink: 0;">주소</strong> 
+                                <span>인천광역시 서해구 청라에메랄드로102번길 8,<br>우성메디피아 806호</span>
+                            </p>
+                            <p><strong>상담전화</strong> 032-568-9565</p>
+                            <p><strong>이메일</strong> gukhwang80@gmail.com</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>
+                            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                            운영 및 안내
+                        </h4>
+                        <div class="info-content">
+                            <p><strong>평일</strong> 15:00 - 21:00</p>
+                            <p><strong>주말</strong> 10:00 - 21:00</p>
+                            <p><strong>휴무일</strong> 매주 월요일, 화요일</p>
+                            <p style="margin-top: 15px; font-size: 0.85rem; color: #777;">* 건물 지하 주차장 이용 가능 (만차 시 인근 공영주차장을 이용해 주세요.)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 하단 푸터 -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-info">
+                국성국어전문학원 | 대표 : 황성웅 | 사업자등록번호 : 731-87-02476 | 주소 : 인천광역시 서해구 청라에메랄드로102번길 8, 우성메디피아 806호 | TEL : 032-568-9565
+            </div>
+            <div class="footer-copyright">
+                © Copyright © PARKYUNCHEOL, ALL rights reserved
+            </div>
+        </div>
+    </footer>
+    <script>
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const logoImg = document.getElementById('logo-img');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+                logoImg.src = 'logo_black.png'; 
+            } else {
+                navbar.classList.remove('scrolled');
+                logoImg.src = 'logo_white.png'; 
+            }
+        });
+    </script>
+</body>
+</html>

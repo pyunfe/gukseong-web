@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>국성국어</title>
+    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
+    <style>
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f8f9fa; 
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           1. 스크롤 시 변하는 상단 고정 메뉴 바 (Navbar)
+           ========================================= */
+        .navbar {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200px; 
+            background-color: transparent; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+            box-sizing: border-box;
+            z-index: 1000;
+            transition: all 0.3s ease; 
+        }
+
+        .navbar.scrolled {
+            background-color: white; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+            height: 100px; 
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 180px; 
+            transition: all 0.3s ease; 
+        }
+
+        .navbar.scrolled .nav-logo img {
+            height: 80px;
+        }
+
+        .nav-right { display: flex; align-items: center; gap: 40px; }
+        .nav-menu { display: flex; list-style: none; gap: 30px; margin: 0; padding: 0; align-items: center; }
+
+        .nav-menu li {
+            position: relative; 
+        }
+
+        .nav-menu li > a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.05rem;
+            font-weight: 700;
+            transition: color 0.3s ease;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            display: block;
+            padding: 10px 0;
+        }
+
+        .navbar.scrolled .nav-menu li > a {
+            color: #333;
+            text-shadow: none;
+        }
+        
+        .navbar.scrolled .nav-menu li > a:hover {
+            color: #9e2a2b;
+        }
+
+        /* 드롭다운 메뉴 스타일 */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 10px 0;
+            list-style: none;
+            margin: 0;
+            z-index: 1001;
+        }
+
+        .nav-menu li:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-menu li {
+            width: 100%;
+            text-align: center;
+        }
+
+        .dropdown-menu li a {
+            color: #333 !important; 
+            text-shadow: none !important;
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .dropdown-menu li a:hover {
+            background-color: #f8f9fa;
+            color: #9e2a2b !important;
+        }
+
+        .nav-contact {
+            display: flex;
+            align-items: center;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            background-color: rgba(255, 255, 255, 0.2); 
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled .nav-contact {
+            background-color: #9e2a2b; 
+            color: white;
+            text-shadow: none;
+        }
+
+        @media (max-width: 992px) {
+            .nav-menu { display: none; }
+            .navbar { padding: 0 20px; }
+            .nav-contact { font-size: 0.95rem; padding: 8px 15px; }
+        }
+
+        /* =========================================
+           2. 메인 화면 (슬라이드 없는 한 장 고정)
+           ========================================= */
+        .hero { 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: flex-start;
+            padding-left: 10%; 
+            background-image: url('main_bg.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            position: relative;
+        }
+
+        /* =========================================
+           3. 5칸 배너 (1:1 비율 적용)
+           ========================================= */
+        .banner-section {
+            width: 100%;
+            max-width: 1400px; 
+            margin: -150px auto 8px auto; 
+            position: relative;
+            z-index: 10;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .lower-section {
+            width: 100%;
+            max-width: 1400px; 
+            margin: 0 auto 80px auto; 
+            position: relative;
+            z-index: 10;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        
+        .banner-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 8px; 
+            background-color: transparent; 
+        }
+
+        /* 💡 1:1 정사각형 배너 공통 스타일 */
+        .banner-box {
+            position: relative;
+            aspect-ratio: 1 / 1; /* 1:1 비율 적용 */
+            height: auto; /* 고정 높이 해제 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; 
+            padding: 10px; 
+            box-sizing: border-box;
+            background-color: #ffffff;
+            color: #222222; 
+            text-decoration: none;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); 
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .banner-box:hover {
+            transform: translateY(-10px); 
+            z-index: 11;
+            box-shadow: 0 15px 35px rgba(158, 42, 43, 0.15);
+            border-color: #9e2a2b;
+        }
+
+        .banner-box h3 { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            margin: 0 0 4px 0; 
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #1a1a1a;
+            transition: color 0.3s ease;
+        }
+        
+        .banner-box .sub-title { 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            color: #666666; 
+            margin: 0 0 12px 0; 
+            word-break: keep-all;
+            transition: color 0.3s ease;
+        }
+
+        .banner-icon {
+            width: 40px; 
+            height: 40px;
+            margin-top: 0; 
+            margin-bottom: 0; 
+            fill: #9e2a2b;
+            transition: transform 0.3s ease;
+        }
+
+        .banner-box:hover h3 { color: #9e2a2b; }
+        .banner-box:hover .banner-icon { transform: scale(1.1); }
+
+        /* 💡 카드뉴스 전용 스타일 (1:1 비율 적용) */
+        .card-box {
+            position: relative;
+            aspect-ratio: 1 / 1; /* 1:1 비율 적용 */
+            height: auto; /* 고정 높이 해제 */
+            display: block;
+            box-sizing: border-box;
+            background-color: #f1f1f1;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); 
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .card-box:hover {
+            transform: translateY(-10px); 
+            z-index: 11;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: #9e2a2b; 
+        }
+
+        .consult-phone {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #9e2a2b; 
+            margin: 8px 0 12px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .consult-details {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+            text-align: center;
+            word-break: keep-all;
+        }
+        
+        .consult-details strong { color: #222; }
+
+        @media (max-width: 1100px) {
+            .banner-section { margin-top: -100px; }
+            .banner-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        }
+        
+        @media (max-width: 768px) {
+            .banner-section { margin-top: -60px; padding: 0 15px; }
+            .lower-section { padding: 0 15px; }
+            /* 💡 모바일에서는 거대한 1칸 대신 2칸 바둑판 배열로 수정 */
+            .banner-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .banner-box, .card-box { padding: 10px; }
+            .banner-box h3 { font-size: 1.2rem; }
+            .banner-box .sub-title { font-size: 0.85rem; margin-bottom: 8px; }
+            .banner-icon { width: 30px; height: 30px; }
+            .consult-phone { font-size: 1.1rem; margin: 4px 0 8px 0; }
+            .consult-details { font-size: 0.75rem; line-height: 1.4; }
+        }
+
+        /* =========================================
+           4. 우측 고정 퀵 메뉴 (이미지 아이콘 + 텍스트 조합)
+           ========================================= */
+        .quick-menu {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px; 
+        }
+
+        .quick-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 90px;
+            text-decoration: none;
+            border-radius: 16px 0 0 16px; 
+            box-shadow: -3px 3px 12px rgba(0,0,0,0.18);
+            transition: transform 0.3s ease, filter 0.3s ease;
+            box-sizing: border-box;
+            text-align: center;
+            padding: 10px 5px;
+        }
+        .quick-btn:hover { transform: translateX(-5px); filter: brightness(0.95); }
+
+        .quick-icon {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            margin-bottom: 6px;
+        }
+
+        /* 네이버 블로그 */
+        .naver-btn {
+            background-color: #2bc381; 
+        }
+        .naver-text {
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        /* 카카오톡 */
+        .kakao-btn {
+            background-color: #FEE500; 
+        }
+        .kakao-text {
+            color: #3a1d1d;
+            font-size: 0.75rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        @media (max-width: 768px) {
+            .quick-btn { width: 65px; height: 75px; padding: 8px 4px; }
+            .quick-icon { width: 28px; height: 28px; margin-bottom: 4px; }
+            .naver-text, .kakao-text { font-size: 0.65rem; }
+        }
+
+        /* =========================================
+           5. 하단 푸터 (Footer) 영역
+           ========================================= */
+        .site-footer {
+            background-color: #000000; 
+            color: #aaa;
+            padding: 40px 20px 30px 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .footer-inner { max-width: 1200px; margin: 0 auto; }
+        .footer-info { color: #ccc; font-size: 0.92rem; margin-bottom: 25px; word-break: keep-all; }
+        .footer-copyright {
+            text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 20px; color: #888; font-size: 0.85rem;
+        }
+
+        /* =========================================
+           6. 💡 팝업 (1장 슬라이드/캐러셀) 스타일
+           ========================================= */
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 10000;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+        .popup-content {
+            background: #fff; width: 90%; max-width: 450px; /* 1장만 예쁘게 보이도록 폭 축소 */
+            border-radius: 12px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .popup-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; border-bottom: 2px solid #1a1a1a; padding-bottom: 10px;
+        }
+        .popup-title { font-size: 1.5rem; font-weight: 800; color: #1a1a1a; margin: 0; }
+        .popup-title span { color: #9e2a2b; }
+        .popup-close-btn { 
+            background: none; border: none; font-size: 2rem; line-height: 1; 
+            cursor: pointer; color: #999; transition: color 0.3s; 
+        }
+        .popup-close-btn:hover { color: #333; }
+        
+        /* 슬라이더 영역 */
+        .popup-slider-container {
+            position: relative; width: 100%; overflow: hidden; border-radius: 8px; border: 1px solid #eaeaea; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .popup-slider-track {
+            display: flex; width: 100%; transition: transform 0.4s ease-in-out;
+        }
+        .popup-card {
+            flex: 0 0 100%; width: 100%; display: block; position: relative; text-decoration: none; 
+        }
+        .popup-thumb { width: 100%; aspect-ratio: 1 / 1; background-size: cover; background-position: center; }
+        
+        .popup-overlay-box { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+        .popup-card:hover .popup-overlay-box { opacity: 1; }
+        .popup-overlay-box span { color: #fff; font-size: 1.1rem; font-weight: 800; border: 2px solid #fff; padding: 8px 16px; border-radius: 30px; background: rgba(0,0,0,0.3); }
+
+        /* 좌우 이동 버튼 */
+        .slider-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(0,0,0,0.5); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.3s;
+        }
+        .slider-arrow:hover { background: rgba(158, 42, 43, 0.9); }
+        .slider-arrow.prev { left: 10px; }
+        .slider-arrow.next { right: 10px; }
+
+        /* 슬라이더 인디케이터 (점) */
+        .slider-dots {
+            position: absolute; bottom: 15px; left: 0; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 10;
+        }
+        .dot {
+            width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        .dot.active { background: #9e2a2b; width: 20px; border-radius: 5px; }
+
+        .popup-footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; color: #555; }
+        .popup-footer label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600; }
+        .popup-close-text { background: #333; color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .popup-close-text:hover { background: #1a1a1a; }
+
+        @media (max-width: 768px) {
+            .popup-content { padding: 20px; }
+            .popup-title { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">
+            <img id="logo-img" src="logo_white.png" alt="로고">
+        </a>
+        <div class="nav-right">
+            <ul class="nav-menu">
+                <li>
+                    <a href="history.html">학원 소개 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="history.html">인사말/연혁</a></li>
+                        <li><a href="features.html">학원 특징</a></li>
+                        <li><a href="system.html">학습 시스템</a></li>
+                        <li><a href="staff.html">교직원</a></li>
+                        <li><a href="location.html">오시는 길</a></li>
+                    </ul>
+                </li>
+                <li><a href="policy.html">학칙 안내</a></li>
+                <li><a href="schedule.html">학원 일정</a></li>
+                <li>
+                    <a href="timetable_mid.html">시간표 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="timetable_mid.html">중등부</a></li>
+                        <li><a href="timetable_high.html">고등부</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="notice_alert.html">공지사항 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="notice_alert.html">알리미</a></li>
+                        <li><a href="notice_special.html">특강</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="nav-contact">
+                상담문의 📞 032-568-9565
+            </div>
+        </div>
+    </nav>
+
+    <!-- 우측 고정 퀵 메뉴 (아이콘 + 텍스트) -->
+    <div class="quick-menu">
+        <a href="https://blog.naver.com/econ555" target="_blank" class="quick-btn naver-btn" title="네이버 블로그">
+            <img src="icon_blog.png" alt="블로그 아이콘" class="quick-icon">
+            <span class="naver-text">네이버<br>블로그</span>
+        </a>
+        <a href="http://pf.kakao.com/_xaKZXX" target="_blank" class="quick-btn kakao-btn" title="카카오톡 상담">
+            <img src="icon_kakao.png" alt="카카오톡 아이콘" class="quick-icon">
+            <span class="kakao-text">카카오톡<br>채널</span>
+        </a>
+    </div>
+
+    <!-- 메인 1장 고정 이미지 영역 -->
+    <header class="hero">
+    </header>
+
+    <!-- 1. 윗줄 5칸 배너 -->
+    <section class="banner-section">
+        <div class="banner-grid">
+            <a href="history.html" class="banner-box">
+                <h3>ABOUT</h3>
+                <p class="sub-title">학원 소개</p>
+                <svg class="banner-icon" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7zM9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1z"/></svg>
+            </a>
+            <a href="policy.html" class="banner-box">
+                <h3>POLICY</h3>
+                <p class="sub-title">학칙 안내</p>
+                <svg class="banner-icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            </a>
+            <a href="schedule.html" class="banner-box">
+                <h3>SCHEDULE</h3>
+                <p class="sub-title">학원 일정</p>
+                <svg class="banner-icon" viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM5 8V6h14v2H5z"/></svg>
+            </a>
+            <a href="timetable_mid.html" class="banner-box">
+                <h3>TIMETABLE</h3>
+                <p class="sub-title">시간표</p>
+                <svg class="banner-icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            </a>
+            <a href="notice_alert.html" class="banner-box">
+                <h3>NOTICE</h3>
+                <p class="sub-title">공지사항</p>
+                <svg class="banner-icon" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- 2. 아랫줄 (카드뉴스3 동적 연동 + 배너2) -->
+    <section class="lower-section">
+        <div class="banner-grid">
+            
+            <!-- 알리미(notice_alert.html)와 연동되어 자동으로 3개가 채워지는 영역 -->
+            <div id="mainAlertGrid" style="display: contents;"></div>
+
+            <a href="location.html" class="banner-box">
+                <h3>LOCATION</h3>
+                <p class="sub-title">오시는 길</p>
+                <svg class="banner-icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            </a>
+
+            <div class="banner-box">
+                <h3>상담문의</h3>
+                <div class="consult-phone">032-568-9565</div>
+                <div class="consult-details">
+                    <strong>월·화</strong> 휴무<br>
+                    <strong>평일</strong> 오후 15:00 - 21:00<br>
+                    <strong>주말</strong> 오전 10:00 - 21:00
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 하단 푸터 -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-info">
+                국성국어전문학원 | 대표 : 황성웅 | 사업자등록번호 : 731-87-02476 | 주소 : 인천광역시 서해구 청라에메랄드로102번길 8, 우성메디피아 806호 | TEL : 032-568-9565
+            </div>
+            <div class="footer-copyright">
+                © Copyright © PARKYUNCHEOL, ALL rights reserved
+            </div>
+        </div>
+    </footer>
+
+    <!-- 💡 새소식 팝업창 HTML 구조 (슬라이드 버전) -->
+    <div id="popupOverlay" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3 class="popup-title">국성국어 <span>새소식</span></h3>
+                <button class="popup-close-btn" id="btnClosePopup">&times;</button>
+            </div>
+            
+            <div class="popup-slider-container" id="popupSliderContainer">
+                <div class="popup-slider-track" id="popupTrack">
+                    <!-- 자바스크립트를 통해 카드뉴스가 자동으로 채워집니다. -->
+                </div>
+                <!-- 좌우 이동 화살표 -->
+                <button class="slider-arrow prev" onclick="movePopupSlide(-1)">&#10094;</button>
+                <button class="slider-arrow next" onclick="movePopupSlide(1)">&#10095;</button>
+                <!-- 하단 동그라미 인디케이터 -->
+                <div class="slider-dots" id="sliderDots"></div>
+            </div>
+            
+            <div class="popup-footer">
+                <label>
+                    <input type="checkbox" id="chkHideToday"> 오늘 하루 보지 않기
+                </label>
+                <button class="popup-close-text" id="btnClosePopupText">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 자바스크립트 영역 -->
+    <script>
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const logoImg = document.getElementById('logo-img');
+            
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+                logoImg.src = 'logo_black.png'; 
+            } else {
+                navbar.classList.remove('scrolled');
+                logoImg.src = 'logo_white.png'; 
+            }
+        });
+
+        // ==========================================
+        // 💡 알리미 데이터 자동 연동 및 슬라이드 팝업 로직
+        // ==========================================
+        const initialPosts = [
+            { image: '카드뉴스1.png', link: 'https://blog.naver.com/econ555/224377673298' },
+            { image: '카드뉴스2.png', link: 'https://blog.naver.com/econ555/224373137805' },
+            { image: '카드뉴스3.png', link: 'https://blog.naver.com/econ555/224373136689' }
+        ]; 
+
+        let currentSlide = 0;
+        let totalSlides = 0;
+        let slideInterval;
+
+        function getPosts() {
+            const localData = JSON.parse(localStorage.getItem('gukseongAlerts')) || [];
+            return [...initialPosts, ...localData]; 
+        }
+
+        function renderMainAlerts() {
+            const posts = getPosts();
+            const grid = document.getElementById('mainAlertGrid');
+            const popupTrack = document.getElementById('popupTrack');
+            const sliderDots = document.getElementById('sliderDots');
+            
+            if(!grid) return;
+            grid.innerHTML = '';
+            if(popupTrack) popupTrack.innerHTML = '';
+            if(sliderDots) sliderDots.innerHTML = '';
+
+            // 최신 글 3개만 추출
+            const latestPosts = posts.slice().reverse().slice(0, 3);
+            totalSlides = latestPosts.length;
+
+            // 1. 하단 배너용 3칸 생성 (기존 유지)
+            for(let i = 0; i < 3; i++) {
+                const post = latestPosts[i];
+                const card = document.createElement('a');
+                card.className = 'card-box';
+                
+                if(post) {
+                    card.href = post.link || '#';
+                    card.target = "_blank"; 
+                    card.style.backgroundImage = `url('${post.image}')`;
+                } else {
+                    card.href = '#';
+                    card.style.display = 'flex';
+                    card.style.alignItems = 'center';
+                    card.style.justifyContent = 'center';
+                    card.innerHTML = '<span style="color:#999; font-weight:600; font-size:0.95rem;">업데이트 예정</span>';
+                }
+                grid.appendChild(card);
+            }
+
+            // 2. 팝업 슬라이더용 카드 생성
+            latestPosts.forEach((post, index) => {
+                const popupCard = document.createElement('a');
+                popupCard.className = 'popup-card';
+                popupCard.href = post.link || '#';
+                popupCard.target = "_blank";
+                popupCard.innerHTML = `
+                    <div class="popup-thumb" style="background-image: url('${post.image}');"></div>
+                    <div class="popup-overlay-box"><span>자세히 보기 ↗</span></div>
+                `;
+                if(popupTrack) popupTrack.appendChild(popupCard);
+
+                // 인디케이터(점) 생성
+                if(sliderDots) {
+                    const dot = document.createElement('div');
+                    dot.className = index === 0 ? 'dot active' : 'dot';
+                    dot.onclick = () => goToSlide(index);
+                    sliderDots.appendChild(dot);
+                }
+            });
+
+            // 게시물이 1개라도 있으면 슬라이드 셋팅 및 팝업 띄우기
+            if(totalSlides > 0) {
+                currentSlide = 0;
+                updateSlidePosition();
+                startSlideTimer(); // 자동 슬라이드 시작
+                checkPopupCookie();
+            } else {
+                // 게시물이 없으면 팝업창 내부에 안내 문구
+                const popupSliderContainer = document.getElementById('popupSliderContainer');
+                if(popupSliderContainer) popupSliderContainer.innerHTML = '<div style="padding:40px 0; text-align:center; color:#888; font-weight:600;">새로운 소식이 곧 업데이트 됩니다.</div>';
+            }
+        }
+
+        // --- 슬라이드 조작 함수 ---
+        window.movePopupSlide = function(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = totalSlides - 1;
+            if (currentSlide >= totalSlides) currentSlide = 0;
+            updateSlidePosition();
+            resetSlideTimer(); // 수동 이동 시 자동 타이머 초기화
+        }
+
+        window.goToSlide = function(index) {
+            currentSlide = index;
+            updateSlidePosition();
+            resetSlideTimer();
+        }
+
+        function updateSlidePosition() {
+            const track = document.getElementById('popupTrack');
+            if(track) {
+                // 1장 크기인 100% 만큼 좌우로 밀어줌
+                track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+            
+            // 하단 점(dot) 활성화 상태 업데이트
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                if(index === currentSlide) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+        }
+
+        // --- 3초 자동 넘김 (타이머) ---
+        function startSlideTimer() {
+            if(totalSlides > 1) { // 2장 이상일 때만 자동 슬라이드
+                slideInterval = setInterval(() => {
+                    movePopupSlide(1);
+                }, 3000);
+            }
+        }
+
+        function resetSlideTimer() {
+            clearInterval(slideInterval);
+            startSlideTimer();
+        }
+
+        // 마우스 올리면 일시정지
+        const popupSliderContainer = document.getElementById('popupSliderContainer');
+        if(popupSliderContainer) {
+            popupSliderContainer.addEventListener('mouseenter', () => clearInterval(slideInterval));
+            popupSliderContainer.addEventListener('mouseleave', startSlideTimer);
+        }
+
+
+        // ==========================================
+        // 💡 팝업 '오늘 하루 보지 않기' 쿠키 제어 로직
+        // ==========================================
+        const popupOverlay = document.getElementById('popupOverlay');
+        const chkHideToday = document.getElementById('chkHideToday');
+
+        function checkPopupCookie() {
+            if (document.cookie.indexOf('hideGukseongPopup=Y') < 0) {
+                popupOverlay.style.display = 'flex';
+            }
+        }
+
+        window.closePopup = function() {
+            if (chkHideToday && chkHideToday.checked) {
+                const date = new Date();
+                date.setHours(23, 59, 59, 999); // 오늘 밤 11시 59분 59초까지
+                document.cookie = "hideGukseongPopup=Y; expires=" + date.toUTCString() + "; path=/";
+            }
+            popupOverlay.style.display = 'none';
+        }
+
+        document.getElementById('btnClosePopup').addEventListener('click', closePopup);
+        document.getElementById('btnClosePopupText').addEventListener('click', closePopup);
+
+        // 팝업 밖 어두운 곳 클릭해도 닫히게 설정
+        popupOverlay.addEventListener('click', (e) => {
+            if(e.target === popupOverlay) closePopup();
+        });
+
+        // 페이지 로딩 시 초기 실행
+        renderMainAlerts();
+    </script>
+</body>
+</html>

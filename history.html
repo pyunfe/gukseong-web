@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인사말/연혁 - 국성국어</title>
+    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
+    <style>
+        body { font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; overflow-x: hidden; }
+
+        /* ================= 공통 레이아웃 ================= */
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 100px; background-color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; box-sizing: border-box; z-index: 1000; }
+        .nav-logo img { height: 80px; }
+        .nav-right { display: flex; align-items: center; gap: 40px; }
+        .nav-menu { display: flex; list-style: none; gap: 30px; margin: 0; padding: 0; align-items: center; }
+        .nav-menu li { position: relative; }
+        .nav-menu li > a { color: #333; text-decoration: none; font-size: 1.05rem; font-weight: 700; transition: color 0.3s ease; display: block; padding: 10px 0; }
+        .nav-menu li > a:hover { color: #9e2a2b; }
+        
+        .dropdown-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background-color: white; min-width: 160px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-radius: 8px; padding: 10px 0; list-style: none; margin: 0; z-index: 1001; }
+        .nav-menu li:hover .dropdown-menu { display: block; }
+        .dropdown-menu li { width: 100%; text-align: center; }
+        .dropdown-menu li a { color: #333 !important; padding: 10px 20px; font-size: 0.95rem; font-weight: 600; }
+        .dropdown-menu li a:hover { background-color: #f8f9fa; color: #9e2a2b !important; }
+
+        .nav-contact { display: flex; align-items: center; color: white; font-size: 1.1rem; font-weight: 700; background-color: #9e2a2b; padding: 10px 20px; border-radius: 30px; transition: all 0.3s ease; }
+
+        /* ================= 우측 고정 퀵 메뉴 ================= */
+        .quick-menu { position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .quick-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 80px; height: 90px; text-decoration: none; border-radius: 16px 0 0 16px; box-shadow: -3px 3px 12px rgba(0,0,0,0.18); transition: transform 0.3s ease, filter 0.3s ease; box-sizing: border-box; text-align: center; padding: 10px 5px; }
+        .quick-btn:hover { transform: translateX(-5px); filter: brightness(0.95); }
+        .quick-icon { width: 38px; height: 38px; object-fit: contain; margin-bottom: 6px; }
+
+        .naver-btn { background-color: #2bc381; }
+        .naver-text { color: #ffffff; font-size: 0.75rem; font-weight: 700; line-height: 1.2; }
+        .kakao-btn { background-color: #FEE500; }
+        .kakao-text { color: #3a1d1d; font-size: 0.75rem; font-weight: 800; line-height: 1.2; }
+
+        /* ================= 하단 푸터 ================= */
+        .site-footer { background-color: #000000; color: #aaa; padding: 40px 20px 30px 20px; font-size: 0.9rem; line-height: 1.6; margin-top: 50px; }
+        .footer-inner { max-width: 1200px; margin: 0 auto; }
+        .footer-info { color: #ccc; font-size: 0.92rem; margin-bottom: 25px; word-break: keep-all; }
+        .footer-copyright { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 20px; color: #888; font-size: 0.85rem; }
+
+        /* ================= 서브페이지 공통 배너 ================= */
+        .sub-header { width: 100%; height: 280px; background-color: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 100px; position: relative; background-image: url('sub_bg.jpg'); background-size: cover; background-position: center; text-align: center; }
+        .sub-header::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.55); z-index: 1; }
+        .sub-header-content { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 6px; padding: 0 20px; }
+        .sub-header-top-text { color: #ffffff; font-size: 1.2rem; font-weight: 500; letter-spacing: 2px; opacity: 0.9; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .sub-header h2 { color: #ffffff; font-size: 2.6rem; font-weight: 900; margin: 0; letter-spacing: 1px; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+
+        /* ================= 💡 좌우 분할 레이아웃 (사이드바 + 본문) ================= */
+        .page-wrapper { max-width: 1200px; margin: 80px auto; padding: 0 20px; display: flex; gap: 60px; align-items: flex-start; }
+        
+        /* 사이드바 스타일 */
+        .sidebar { width: 250px; flex-shrink: 0; background: #fff; border: 1px solid #eaeaea; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .sidebar-title { background-color: #1a1a1a; color: #fff; font-size: 1.4rem; font-weight: 800; text-align: center; padding: 25px 0; margin: 0; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li { border-bottom: 1px solid #eaeaea; }
+        .sidebar-menu li:last-child { border-bottom: none; }
+        .sidebar-menu a { display: block; padding: 18px 20px; color: #555; text-decoration: none; font-size: 1.05rem; font-weight: 600; transition: all 0.3s ease; }
+        .sidebar-menu a:hover { background-color: #f8f9fa; color: #9e2a2b; }
+        
+        /* 활성화된 현재 페이지 메뉴 스타일 */
+        .sidebar-menu a.active { background-color: #fcf6f6; color: #9e2a2b; font-weight: 800; }
+
+        /* 우측 본문 영역 */
+        .page-content { flex: 1; min-width: 0; }
+
+        /* ================= 인사말 및 연혁 본문 ================= */
+        .greeting-section { text-align: center; margin-bottom: 80px; padding: 50px 30px; background-color: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #eee; }
+        .greeting-section h3 { font-size: 1.4rem; font-weight: 700; color: #555; margin: 0 0 15px 0; word-break: keep-all; line-height: 1.5; }
+        .greeting-section h3 strong { color: #9e2a2b; font-size: 1.6rem; }
+        .greeting-section h2 { font-size: 3rem; font-weight: 900; color: #1a1a1a; margin: 0 0 30px 0; letter-spacing: -1px; }
+        .greeting-section h2 span { color: #9e2a2b; }
+        .greeting-section p { font-size: 1.2rem; font-weight: 600; color: #444; margin: 0 auto; padding-top: 30px; border-top: 2px dashed #eaeaea; display: inline-block; line-height: 1.6; text-align: center; }
+        .greeting-section p strong { font-family: Arial, sans-serif; font-style: italic; font-size: 1.4rem; color: #1a1a1a; letter-spacing: 1px; }
+
+        .section-title { text-align: center; font-size: 2rem; font-weight: 800; color: #1a1a1a; margin-bottom: 50px; }
+        .section-title span { color: #9e2a2b; }
+
+        .timeline { position: relative; max-width: 100%; margin: 0 auto; padding: 20px 0; }
+        .timeline::after { content: ''; position: absolute; width: 4px; background-color: #e9ecef; top: 0; bottom: 0; left: 50%; margin-left: -2px; border-radius: 2px; }
+
+        .timeline-item { padding: 10px 40px; position: relative; width: 50%; box-sizing: border-box; margin-bottom: 40px; }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-item:nth-child(odd) { left: 0; text-align: right; }
+        .timeline-item:nth-child(even) { left: 50%; text-align: left; }
+
+        .timeline-item::after { content: ''; position: absolute; width: 22px; height: 22px; background-color: #fff; border: 5px solid #9e2a2b; border-radius: 50%; top: 15px; z-index: 1; box-sizing: border-box; box-shadow: 0 0 0 4px rgba(158, 42, 43, 0.1); }
+        .timeline-item:nth-child(odd)::after { right: -11px; }
+        .timeline-item:nth-child(even)::after { left: -11px; }
+
+        .timeline-content { background-color: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.04); border: 1px solid #f1f1f1; position: relative; transition: transform 0.3s ease; }
+        .timeline-item:hover .timeline-content { transform: translateY(-5px); border-color: #9e2a2b; box-shadow: 0 10px 25px rgba(158, 42, 43, 0.1); }
+
+        .timeline-year { font-size: 1.8rem; font-weight: 900; color: #9e2a2b; margin-bottom: 10px; font-family: Arial, sans-serif; letter-spacing: -1px; }
+        .timeline-desc { font-size: 1.1rem; font-weight: 700; color: #1a1a1a; margin: 0 0 8px 0; word-break: keep-all; line-height: 1.4; }
+        .timeline-sub { font-size: 0.9rem; color: #666; margin: 0; line-height: 1.6; word-break: keep-all; }
+        
+        .tmi-badge { display: inline-block; background-color: #fef0f0; color: #d93838; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; margin-top: 10px; border: 1px solid #fbd5d5; }
+
+        /* 반응형 설정 (모바일에서는 사이드바가 위로 가도록) */
+        @media (max-width: 992px) {
+            .page-wrapper { flex-direction: column; gap: 40px; margin: 50px auto; }
+            .sidebar { width: 100%; }
+            .sidebar-menu { display: flex; flex-wrap: wrap; }
+            .sidebar-menu li { flex: 1 1 50%; border-right: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
+            .sidebar-menu li:nth-child(even) { border-right: none; }
+            .sidebar-menu a { text-align: center; padding: 12px 10px; font-size: 0.95rem; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 20px; }
+            .nav-menu { display: none; }
+            .nav-contact { font-size: 0.95rem; padding: 8px 15px; }
+            .sub-header-top-text { font-size: 0.9rem; }
+            .sub-header h2 { font-size: 1.8rem; }
+            .quick-btn { width: 65px; height: 75px; padding: 8px 4px; }
+            .quick-icon { width: 28px; height: 28px; margin-bottom: 4px; }
+            .naver-text, .kakao-text { font-size: 0.65rem; }
+
+            .greeting-section { padding: 30px 20px; margin-bottom: 50px; }
+            .greeting-section h3 { font-size: 1.1rem; }
+            .greeting-section h2 { font-size: 2rem; }
+            .greeting-section p { font-size: 1rem; }
+            
+            .timeline::after { left: 30px; }
+            .timeline-item { width: 100%; padding-left: 70px; padding-right: 0; text-align: left !important; left: 0 !important; margin-bottom: 30px; }
+            .timeline-item:nth-child(odd)::after, .timeline-item:nth-child(even)::after { left: 19px; }
+            .timeline-content { padding: 20px; }
+            .timeline-year { font-size: 1.5rem; }
+            .timeline-desc { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo"><img src="logo_black.png" alt="로고"></a>
+        <div class="nav-right">
+            <ul class="nav-menu">
+                <li><a href="history.html">학원 소개 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="history.html">인사말/연혁</a></li>
+                        <li><a href="features.html">학원 특징</a></li>
+<li><a href="system.html">학습 시스템</a></li>
+                        <li><a href="staff.html">교직원</a></li>
+                        <li><a href="location.html">오시는 길</a></li>
+                    </ul>
+                </li>
+                <li><a href="policy.html">학칙 안내</a></li>
+                <li><a href="schedule.html">학원 일정</a></li>
+                <li>
+                    <a href="timetable_mid.html">시간표 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="timetable_mid.html">중등부</a></li>
+                        <li><a href="timetable_high.html">고등부</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="notice_alert.html">공지사항 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="notice_alert.html">알리미</a></li>
+                        <li><a href="notice_special.html">특강</a></li></ul>
+                </li>
+            </ul>
+            <div class="nav-contact">상담문의 📞 032-568-9565</div>
+        </div>
+    </nav>
+
+    <!-- 우측 고정 퀵 메뉴 -->
+    <div class="quick-menu">
+        <a href="https://blog.naver.com/econ555" target="_blank" class="quick-btn naver-btn" title="네이버 블로그">
+            <img src="icon_blog.png" alt="블로그 아이콘" class="quick-icon">
+            <span class="naver-text">네이버<br>블로그</span>
+        </a>
+        <a href="http://pf.kakao.com/_xaKZXX" target="_blank" class="quick-btn kakao-btn" title="카카오톡 채널">
+            <img src="icon_kakao.png" alt="카카오톡 아이콘" class="quick-icon">
+            <span class="kakao-text">카카오톡<br>채널</span>
+        </a>
+    </div>
+
+    <!-- 서브페이지 배너 -->
+    <div class="sub-header">
+        <div class="sub-header-content">
+            <span class="sub-header-top-text">1등급으로 가는 가장 빠른 길</span>
+            <h2>국성국어</h2>
+        </div>
+    </div>
+
+    <!-- 💡 좌우 분할 레이아웃 (사이드바 + 우측 본문) -->
+    <div class="page-wrapper">
+        
+        <!-- 좌측 사이드바 (LNB) -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">학원 소개</h2>
+            <ul class="sidebar-menu">
+                <li><a href="history.html" class="active">인사말/연혁</a></li>
+                <li><a href="features.html">학원 특징</a></li>
+<li><a href="system.html">학습 시스템</a></li>
+                <li><a href="staff.html">교직원</a></li>
+                <li><a href="location.html">오시는 길</a></li>
+            </ul>
+        </aside>
+
+        <!-- 우측 컨텐츠 영역 -->
+        <main class="page-content">
+            <!-- 인사말 영역 -->
+            <div class="greeting-section">
+                <h3>청라에서 중고등학생만 <strong>800명</strong>을 넘게 가르치는</h3>
+                <h2>국어는 어디? <span>국성국어!</span></h2>
+                <p>우리의 목표는 <strong>UNLIMITED</strong> 입니다.<br>그저 믿고 보내주세요.</p>
+            </div>
+
+            <!-- 연혁 영역 -->
+            <div class="section-title">국성국어가 <span>걸어온 길</span></div>
+            
+            <div class="timeline">
+                <!-- 2026 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2026</div>
+                        <p class="timeline-desc">재원생 800명 돌파 & 11관 개원 준비 중</p>
+                        <p class="timeline-sub">원장님 첫째, 둘째 등록 (열공 중!)</p>
+                        <span class="tmi-badge">※ TMI : 현재 원비 미납 중 😅</span>
+                    </div>
+                </div>
+
+                <!-- 2025 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2025</div>
+                        <p class="timeline-desc">재원생 600명 돌파</p>
+                        <p class="timeline-sub">바다관 (10관) 개원</p>
+                    </div>
+                </div>
+
+                <!-- 2024 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2024</div>
+                        <p class="timeline-desc">재원생 500명 돌파</p>
+                        <p class="timeline-sub">중등전문브랜드 '문해력 마루' 런칭 및 개원</p>
+                    </div>
+                </div>
+
+                <!-- 2023 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2023</div>
+                        <p class="timeline-desc">재원생 400명 돌파</p>
+                        <p class="timeline-sub">6관 추가 개원 및 확장</p>
+                    </div>
+                </div>
+
+                <!-- 2021 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2021</div>
+                        <p class="timeline-desc">재원생 200명 돌파</p>
+                        <p class="timeline-sub">4관, 5관 동시 개원</p>
+                    </div>
+                </div>
+
+                <!-- 2020 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2020</div>
+                        <p class="timeline-desc">재원생 100명 돌파</p>
+                        <p class="timeline-sub">3관 개원</p>
+                    </div>
+                </div>
+
+                <!-- 2019 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2019</div>
+                        <p class="timeline-desc">국성국어전문학원 첫 개원</p>
+                        <p class="timeline-sub">단 2명의 학생으로 시작</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 하단 푸터 -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-info">
+                국성국어전문학원 | 대표 : 황성웅 | 사업자등록번호 : 731-87-02476 | 주소 : 인천광역시 서해구 청라에메랄드로102번길 8, 우성메디피아 806호 | TEL : 032-568-9565
+            </div>
+            <div class="footer-copyright">
+                © Copyright © PARKYUNCHEOL, ALL rights reserved
+            </div>
+        </div>
+    </footer>
+
+    <!-- 자바스크립트 영역 -->
+    <script>
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const logoImg = document.getElementById('logo-img');
+            
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+                logoImg.src = 'logo_black.png'; 
+            } else {
+                navbar.classList.remove('scrolled');
+                logoImg.src = 'logo_white.png'; 
+            }
+        });
+    </script>
+</body>
+</html>

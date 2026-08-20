@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학원 특징 - 국성국어</title>
+    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
+    <style>
+        body { font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; overflow-x: hidden; }
+
+        /* ================= 공통 레이아웃 ================= */
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 100px; background-color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; box-sizing: border-box; z-index: 1000; }
+        .nav-logo img { height: 80px; }
+        .nav-right { display: flex; align-items: center; gap: 40px; }
+        .nav-menu { display: flex; list-style: none; gap: 30px; margin: 0; padding: 0; align-items: center; }
+        .nav-menu li { position: relative; }
+        .nav-menu li > a { color: #333; text-decoration: none; font-size: 1.05rem; font-weight: 700; transition: color 0.3s ease; display: block; padding: 10px 0; }
+        .nav-menu li > a:hover { color: #9e2a2b; }
+        
+        .dropdown-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background-color: white; min-width: 160px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-radius: 8px; padding: 10px 0; list-style: none; margin: 0; z-index: 1001; }
+        .nav-menu li:hover .dropdown-menu { display: block; }
+        .dropdown-menu li { width: 100%; text-align: center; }
+        .dropdown-menu li a { color: #333 !important; padding: 10px 20px; font-size: 0.95rem; font-weight: 600; }
+        .dropdown-menu li a:hover { background-color: #f8f9fa; color: #9e2a2b !important; }
+
+        .nav-contact { display: flex; align-items: center; color: white; font-size: 1.1rem; font-weight: 700; background-color: #9e2a2b; padding: 10px 20px; border-radius: 30px; transition: all 0.3s ease; }
+
+        /* ================= 우측 고정 퀵 메뉴 ================= */
+        .quick-menu { position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .quick-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 80px; height: 90px; text-decoration: none; border-radius: 16px 0 0 16px; box-shadow: -3px 3px 12px rgba(0,0,0,0.18); transition: transform 0.3s ease, filter 0.3s ease; box-sizing: border-box; text-align: center; padding: 10px 5px; }
+        .quick-btn:hover { transform: translateX(-5px); filter: brightness(0.95); }
+        .quick-icon { width: 38px; height: 38px; object-fit: contain; margin-bottom: 6px; }
+
+        .naver-btn { background-color: #2bc381; }
+        .naver-text { color: #ffffff; font-size: 0.75rem; font-weight: 700; line-height: 1.2; }
+        .kakao-btn { background-color: #FEE500; }
+        .kakao-text { color: #3a1d1d; font-size: 0.75rem; font-weight: 800; line-height: 1.2; }
+
+        /* ================= 하단 푸터 ================= */
+        .site-footer { background-color: #000000; color: #aaa; padding: 40px 20px 30px 20px; font-size: 0.9rem; line-height: 1.6; margin-top: 50px; }
+        .footer-inner { max-width: 1200px; margin: 0 auto; }
+        .footer-info { color: #ccc; font-size: 0.92rem; margin-bottom: 25px; word-break: keep-all; }
+        .footer-copyright { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 20px; color: #888; font-size: 0.85rem; }
+
+        /* ================= 서브페이지 공통 배너 ================= */
+        .sub-header { width: 100%; height: 280px; background-color: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 100px; position: relative; background-image: url('sub_bg.jpg'); background-size: cover; background-position: center; text-align: center; }
+        .sub-header::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.55); z-index: 1; }
+        .sub-header-content { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 6px; padding: 0 20px; }
+        .sub-header-top-text { color: #ffffff; font-size: 1.2rem; font-weight: 500; letter-spacing: 2px; opacity: 0.9; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .sub-header h2 { color: #ffffff; font-size: 2.6rem; font-weight: 900; margin: 0; letter-spacing: 1px; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+
+        /* ================= 사이드바(LNB) + 본문 분할 레이아웃 ================= */
+        .page-wrapper { max-width: 1200px; margin: 80px auto; padding: 0 20px; display: flex; gap: 60px; align-items: flex-start; }
+        
+        .sidebar { width: 250px; flex-shrink: 0; background: #fff; border: 1px solid #eaeaea; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .sidebar-title { background-color: #1a1a1a; color: #fff; font-size: 1.4rem; font-weight: 800; text-align: center; padding: 25px 0; margin: 0; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li { border-bottom: 1px solid #eaeaea; }
+        .sidebar-menu li:last-child { border-bottom: none; }
+        .sidebar-menu a { display: block; padding: 18px 20px; color: #555; text-decoration: none; font-size: 1.05rem; font-weight: 600; transition: all 0.3s ease; }
+        .sidebar-menu a:hover { background-color: #f8f9fa; color: #9e2a2b; }
+        .sidebar-menu a.active { background-color: #fcf6f6; color: #9e2a2b; font-weight: 800; }
+
+        .page-content { flex: 1; min-width: 0; }
+
+        /* ================= 학원 특징 본문 ================= */
+        .section-title { text-align: center; font-size: 2rem; font-weight: 800; color: #1a1a1a; margin-bottom: 60px; }
+        .section-title span { color: #9e2a2b; }
+
+        .feature-row { display: flex; align-items: center; gap: 40px; margin-bottom: 80px; }
+        .feature-row.reverse { flex-direction: row-reverse; } 
+        
+        .feature-img { flex: 1; height: 320px; border-radius: 12px; background-color: #e9ecef; background-size: cover; background-position: center; box-shadow: 0 15px 30px rgba(0,0,0,0.08); position: relative; overflow: hidden; }
+        .feature-text { flex: 1; padding: 10px 0; }
+        
+        .feature-num { font-size: 1.4rem; font-weight: 900; color: #9e2a2b; margin-bottom: 15px; display: inline-block; padding-bottom: 5px; border-bottom: 3px solid #9e2a2b; }
+        .feature-text h3 { font-size: 1.8rem; font-weight: 800; color: #1a1a1a; margin: 0 0 20px 0; word-break: keep-all; line-height: 1.3; }
+        .feature-text p { font-size: 1.05rem; color: #555; line-height: 1.8; word-break: keep-all; margin: 0; }
+        .feature-text strong { color: #9e2a2b; font-weight: 800; }
+
+        /* 반응형 */
+        @media (max-width: 992px) {
+            .page-wrapper { flex-direction: column; gap: 40px; margin: 50px auto; }
+            .sidebar { width: 100%; }
+            .sidebar-menu { display: flex; flex-wrap: wrap; }
+            .sidebar-menu li { flex: 1 1 50%; border-right: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
+            .sidebar-menu li:nth-child(even) { border-right: none; }
+            .sidebar-menu a { text-align: center; padding: 12px 10px; font-size: 0.95rem; }
+            
+            .feature-row, .feature-row.reverse { flex-direction: column; gap: 30px; margin-bottom: 60px; }
+            .feature-img { width: 100%; height: 300px; }
+            .feature-text { text-align: center; }
+            .feature-num { margin: 0 auto 15px auto; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 20px; }
+            .nav-menu { display: none; }
+            .nav-contact { font-size: 0.95rem; padding: 8px 15px; }
+            .sub-header-top-text { font-size: 0.9rem; }
+            .sub-header h2 { font-size: 1.8rem; }
+            .quick-btn { width: 65px; height: 75px; padding: 8px 4px; }
+            .quick-icon { width: 28px; height: 28px; margin-bottom: 4px; }
+            .naver-text, .kakao-text { font-size: 0.65rem; }
+            .feature-text h3 { font-size: 1.6rem; }
+            .feature-text p { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo"><img src="logo_black.png" alt="로고"></a>
+        <div class="nav-right">
+            <ul class="nav-menu">
+                <li><a href="history.html">학원 소개 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="history.html">인사말/연혁</a></li>
+                        <li><a href="features.html">학원 특징</a></li>
+                        <li><a href="system.html">학습 시스템</a></li>
+                        <li><a href="staff.html">교직원</a></li>
+                        <li><a href="location.html">오시는 길</a></li>
+                    </ul>
+                </li>
+                <li><a href="policy.html">학칙 안내</a></li>
+                <li><a href="schedule.html">학원 일정</a></li>
+                <li>
+                    <a href="timetable_mid.html">시간표 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="timetable_mid.html">중등부</a></li>
+                        <li><a href="timetable_high.html">고등부</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="notice_alert.html">공지사항 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="notice_alert.html">알리미</a></li>
+                        <li><a href="notice_special.html">특강</a></li></ul>
+                </li>
+            </ul>
+            <div class="nav-contact">상담문의 📞 032-568-9565</div>
+        </div>
+    </nav>
+
+    <!-- 우측 고정 퀵 메뉴 -->
+    <div class="quick-menu">
+        <a href="https://blog.naver.com/econ555" target="_blank" class="quick-btn naver-btn">
+            <img src="icon_blog.png" alt="블로그 아이콘" class="quick-icon">
+            <span class="naver-text">네이버<br>블로그</span>
+        </a>
+        <a href="http://pf.kakao.com/_xaKZXX" target="_blank" class="quick-btn kakao-btn">
+            <img src="icon_kakao.png" alt="카카오톡 아이콘" class="quick-icon">
+            <span class="kakao-text">카카오톡<br>채널</span>
+        </a>
+    </div>
+
+    <!-- 서브페이지 배너 -->
+    <div class="sub-header">
+        <div class="sub-header-content">
+            <span class="sub-header-top-text">1등급으로 가는 가장 빠른 길</span>
+            <h2>국성국어</h2>
+        </div>
+    </div>
+
+    <!-- 좌우 분할 레이아웃 -->
+    <div class="page-wrapper">
+        
+        <!-- 좌측 사이드바 -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">학원 소개</h2>
+            <ul class="sidebar-menu">
+                <li><a href="history.html">인사말/연혁</a></li>
+                <!-- 💡 현재 페이지 활성화 -->
+                <li><a href="features.html" class="active">학원 특징</a></li>
+<li><a href="system.html">학습 시스템</a></li>
+                <li><a href="staff.html">교직원</a></li>
+                <li><a href="location.html">오시는 길</a></li>
+            </ul>
+        </aside>
+
+        <!-- 우측 본문 -->
+        <main class="page-content">
+            <div class="section-title">국성국어만의 <span>특별함</span></div>
+            
+            <div class="feature-row">
+                <div class="feature-img" style="background-image: url('feature_01.jpg');"></div>
+                <div class="feature-text">
+                    <div class="feature-num">01</div>
+                    <h3>100% 전임 강사진의<br>완벽한 '3년 로테이션' 시스템</h3>
+                    <p>국성국어의 모든 강사는 100% 전임으로 구성됩니다.<br>특히 고1부터 고3까지 한 사이클을 온전히 책임지고 다시 고1로 <br>돌아오는 <strong>3년 로테이션 시스템</strong>을 통해, 학년별 연계 학습은 물론<br>각 학교의 3개년 출제 경향을 완벽하게 꿰뚫고 있습니다.<br>이렇게 누적된 압도적인 데이터를 바탕으로 <br>밀도 높은 <strong>자체 교재</strong>를 제공합니다.</p>
+                </div>
+            </div>
+
+            <div class="feature-row reverse">
+                <div class="feature-img" style="background-image: url('feature_02.jpg');"></div>
+                <div class="feature-text">
+                    <div class="feature-num">02</div>
+                    <h3>청라 교육의 중심,<br>8년의 압도적 데이터</h3>
+                    <p>청라 지역 한 곳에서만 무려 <strong>8년</strong> 동안 굳건히 자리를 지켜온<br>장수 대형 학원의 품격은 다릅니다. 청라 및 서구권 담당 학교들의<br><strong>방대한 자료를 다량 보유</strong>하고 있으며, 수년간 촘촘하게<br>축적된 내신 데이터를 바탕으로 그 어느 곳보다<br>탄탄하고 적중률 높은 내신 대비를 보장합니다.</p>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-img" style="background-image: url('feature_03.jpg');"></div>
+                <div class="feature-text">
+                    <div class="feature-num">03</div>
+                    <h3>"각자만의 레이스"<br>빈틈없는 1:1 밀착 클리닉</h3>
+                    <p>학생들은 저마다의 속도와 이해도를 가지고 있습니다.<br>국성국어는 학생 모두가 자신만의 레이스를<br>성공적으로 완주할 수 있도록<br><strong>개개인의 수준에 맞춘 1:1 밀착 클리닉</strong>을 제공합니다.<br>획일화된 진도 빼기가 아닌, 약점을 정확히 타격하고 보완하는<br>빈틈없는 학습 관리 시스템으로 성적 향상을 이끕니다.</p>
+                </div>
+            </div>
+
+            <div class="feature-row reverse">
+                <div class="feature-img" style="background-image: url('feature_04.jpg');"></div>
+                <div class="feature-text">
+                    <div class="feature-num">04</div>
+                    <h3>입시 초격차를 만드는 정보력과<br>프리미엄 무료 특강</h3>
+                    <p>매년 다수의 설명회를 개최하여 특목고 및 대입을 아우르는<br>깊이 있는 인사이트를 제공합니다. 이 <strong>'정보의 격차'</strong>가 쌓여 훗날<br>입시에서의 <strong>'초격차'</strong>를 만듭니다. 또한, 방학마다 유료 특강을<br>유도하는 타 학원들과는 다릅니다. 장수 학원만의 특혜로,<br>방학 기간 수준 높은 <strong>프리미엄 특강을 무료로 제공</strong>하여<br>실력 도약을 아낌없이 지원합니다.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 하단 푸터 -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-info">
+                국성국어전문학원 | 대표 : 황성웅 | 사업자등록번호 : 731-87-02476 | 주소 : 인천광역시 서해구 청라에메랄드로102번길 8, 우성메디피아 806호 | TEL : 032-568-9565
+            </div>
+            <div class="footer-copyright">
+                © Copyright © PARKYUNCHEOL, ALL rights reserved
+            </div>
+        </div>
+    </footer>
+    <script>
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const logoImg = document.getElementById('logo-img');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+                logoImg.src = 'logo_black.png'; 
+            } else {
+                navbar.classList.remove('scrolled');
+                logoImg.src = 'logo_white.png'; 
+            }
+        });
+    </script>
+</body>
+</html>
