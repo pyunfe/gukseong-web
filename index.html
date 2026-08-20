@@ -6,6 +6,8 @@
     <title>국성국어</title>
     
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <!-- 💡 Supabase 연동 라이브러리 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         body { 
@@ -518,7 +520,7 @@
         </a>
         <a href="http://pf.kakao.com/_xaKZXX" target="_blank" class="quick-btn kakao-btn" title="카카오톡 상담">
             <img src="icon_kakao.png" alt="카카오톡 아이콘" class="quick-icon">
-            <span class="kakao-text">카카오톡<br>채널</span>
+            <span class="kakao-text">카카오톡<br>상담</span>
         </a>
     </div>
 
@@ -639,25 +641,34 @@
         });
 
         // ==========================================
-        // 💡 알리미 데이터 자동 연동 및 슬라이드 팝업 로직
+        // 💡 Supabase에서 알리미 데이터 불러오기
         // ==========================================
-        const initialPosts = [
-            { image: '카드뉴스1.png', link: 'https://blog.naver.com/econ555/224377673298' },
-            { image: '카드뉴스2.png', link: 'https://blog.naver.com/econ555/224373137805' },
-            { image: '카드뉴스3.png', link: 'https://blog.naver.com/econ555/224373136689' }
-        ]; 
+        const SUPABASE_URL = 'https://haaiwbjdlqwrfrvsurxi.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhYWl3YmpkbHF3cmZydnN1cnhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MTQ1NjQsImV4cCI6MjEwMjA5MDU2NH0.hiMuLbrgkF2W_-PR5dfwmqI2TAOLi3yJv25_iCMovFE';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentSlide = 0;
         let totalSlides = 0;
         let slideInterval;
 
-        function getPosts() {
-            const localData = JSON.parse(localStorage.getItem('gukseongAlerts')) || [];
-            return [...initialPosts, ...localData]; 
+        async function fetchMainAlerts() {
+            try {
+                // gukseong_alerts 테이블에서 최신글 3개만 가져오기
+                const { data, error } = await _supabase
+                    .from('gukseong_alerts')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(3);
+
+                if (error) throw error;
+                renderMainAlerts(data || []);
+            } catch (err) {
+                console.error('메인 알리미 불러오기 실패:', err);
+                renderMainAlerts([]); // 실패해도 에러 방지를 위해 빈 배열로 화면 구성
+            }
         }
 
-        function renderMainAlerts() {
-            const posts = getPosts();
+        function renderMainAlerts(latestPosts) {
             const grid = document.getElementById('mainAlertGrid');
             const popupTrack = document.getElementById('popupTrack');
             const sliderDots = document.getElementById('sliderDots');
@@ -667,20 +678,18 @@
             if(popupTrack) popupTrack.innerHTML = '';
             if(sliderDots) sliderDots.innerHTML = '';
 
-            // 최신 글 3개만 추출
-            const latestPosts = posts.slice().reverse().slice(0, 3);
             totalSlides = latestPosts.length;
 
-            // 1. 하단 배너용 3칸 생성 (기존 유지)
+            // 1. 하단 배너용 3칸 생성 (게시글이 모자라도 빈칸으로 3칸 유지)
             for(let i = 0; i < 3; i++) {
                 const post = latestPosts[i];
                 const card = document.createElement('a');
                 card.className = 'card-box';
                 
                 if(post) {
-                    card.href = post.link || '#';
+                    card.href = post.link_url || '#';
                     card.target = "_blank"; 
-                    card.style.backgroundImage = `url('${post.image}')`;
+                    card.style.backgroundImage = `url('${post.image_url}')`;
                 } else {
                     card.href = '#';
                     card.style.display = 'flex';
@@ -695,10 +704,10 @@
             latestPosts.forEach((post, index) => {
                 const popupCard = document.createElement('a');
                 popupCard.className = 'popup-card';
-                popupCard.href = post.link || '#';
+                popupCard.href = post.link_url || '#';
                 popupCard.target = "_blank";
                 popupCard.innerHTML = `
-                    <div class="popup-thumb" style="background-image: url('${post.image}');"></div>
+                    <div class="popup-thumb" style="background-image: url('${post.image_url}');"></div>
                     <div class="popup-overlay-box"><span>자세히 보기 ↗</span></div>
                 `;
                 if(popupTrack) popupTrack.appendChild(popupCard);
@@ -776,7 +785,6 @@
             popupSliderContainer.addEventListener('mouseleave', startSlideTimer);
         }
 
-
         // ==========================================
         // 💡 팝업 '오늘 하루 보지 않기' 쿠키 제어 로직
         // ==========================================
@@ -806,8 +814,8 @@
             if(e.target === popupOverlay) closePopup();
         });
 
-        // 페이지 로딩 시 초기 실행
-        renderMainAlerts();
+        // 페이지 로딩 시 초기 실행 (Supabase에서 알리미 데이터 불러오기)
+        fetchMainAlerts();
     </script>
 </body>
 </html>
