@@ -481,17 +481,28 @@
                 background-position: center;
             }
 
-            /* 3. 배너 최적화 (알리미3 + 상담1) */
+            /* 3. 배너 숨김 및 하단 4칸 집중 배치 */
             .banner-section { display: none; } 
             .location-banner { display: none !important; } 
             
-            .lower-section { margin-top: -60px; padding: 0 15px; }
-            .banner-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            /* 💡 여기서부터 아래 끝까지 덮어쓰기! */
+            .lower-section { margin-top: -60px; padding: 0 15px; width: 100%; box-sizing: border-box; overflow: hidden; }
             
-            .banner-box, .card-box { padding: 15px 10px; }
+            .banner-grid { 
+                display: grid; 
+                /* 💡 핵심: 어떤 일이 있어도 화면을 넘지 못하게 가두는 마법의 코드 (minmax) */
+                grid-template-columns: repeat(2, minmax(0, 1fr)); 
+                gap: 8px; 
+                width: 100%;
+                box-sizing: border-box;
+            }
+            
+            .banner-box, .card-box { padding: 15px 5px; width: 100%; box-sizing: border-box; }
             .banner-box h3 { font-size: 1.3rem; margin-bottom: 8px; }
-            .consult-phone { font-size: 1.15rem; margin: 6px 0 10px 0; }
-            .consult-details { font-size: 0.8rem; line-height: 1.5; }
+            
+            /* 전화번호 글씨가 칸을 뚫고 나가지 않게 크기 살짝 조정 */
+            .consult-phone { font-size: 1.05rem; margin: 6px 0 10px 0; letter-spacing: -0.5px; white-space: nowrap; }
+            .consult-details { font-size: 0.75rem; line-height: 1.4; word-break: keep-all; }
 
             .quick-btn { width: 55px; height: 65px; padding: 6px 3px; }
             .quick-icon { width: 22px; height: 22px; margin-bottom: 4px; }
