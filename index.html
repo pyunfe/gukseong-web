@@ -423,21 +423,21 @@
         }
         
         @media (max-width: 768px) {
-            /* 1. 모바일 상단 바 스타일 */
-            .navbar { height: 85px; padding: 0 20px; background-color: transparent !important; box-shadow: none !important; }
-            .nav-logo img { height: 60px !important; }
-            .mobile-menu-btn { display: block; color: white; text-shadow: 0 2px 5px rgba(0,0,0,0.5); } 
+            /* 1. 모바일 상단 바 크기 축소 (투명 상태) */
+            .navbar { height: 60px; padding: 0 15px; background-color: transparent !important; box-shadow: none !important; }
+            .nav-logo img { height: 35px !important; }
+            .mobile-menu-btn { display: block; color: white; font-size: 1.8rem; text-shadow: 0 2px 5px rgba(0,0,0,0.5); } 
             
-            /* 스크롤 시 변하는 스타일 */
-            .navbar.scrolled { background-color: rgba(255,255,255,0.98) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important; }
+            /* 스크롤 시 변하는 스타일 (흰색 배경) */
+            .navbar.scrolled { height: 60px; background-color: rgba(255,255,255,0.98) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important; }
             .navbar.scrolled .mobile-menu-btn { color: #1a1a1a; text-shadow: none; }
-            .navbar.scrolled .nav-logo img { height: 50px !important; }
+            .navbar.scrolled .nav-logo img { height: 35px !important; }
 
-            /* 💡 2번 스타일: 우측 상단에 톡 나타나는 깔끔한 카드형 팝업 메뉴 */
+            /* 💡 2번 스타일: 카드형 팝업 메뉴 (위치 끌어올림) */
             .nav-right {
                 display: none; 
                 position: absolute; 
-                top: 75px; 
+                top: 50px; /* 네비게이션 바가 얇아졌으니 메뉴도 위로 올림 */
                 right: 15px; 
                 width: 200px; 
                 background: white;

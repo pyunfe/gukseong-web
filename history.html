@@ -13,6 +13,7 @@
         /* ================= 공통 레이아웃 ================= */
         .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 100px; background-color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; box-sizing: border-box; z-index: 1000; }
         .nav-logo img { height: 80px; }
+.mobile-menu-btn { display: none; background: none; border: none; font-size: 2rem; cursor: pointer; }
         .nav-right { display: flex; align-items: center; gap: 40px; }
         .nav-menu { display: flex; list-style: none; gap: 30px; margin: 0; padding: 0; align-items: center; }
         .nav-menu li { position: relative; }
@@ -102,26 +103,68 @@
         
         .tmi-badge { display: inline-block; background-color: #fef0f0; color: #d93838; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; margin-top: 10px; border: 1px solid #fbd5d5; }
 
-        /* 반응형 설정 (모바일에서는 사이드바가 위로 가도록) */
+        /* =========================================
+           💡 반응형 설정 (태블릿/모바일 최적화)
+           ========================================= */
         @media (max-width: 992px) {
-            .page-wrapper { flex-direction: column; gap: 40px; margin: 50px auto; }
-            .sidebar { width: 100%; }
-            .sidebar-menu { display: flex; flex-wrap: wrap; }
-            .sidebar-menu li { flex: 1 1 50%; border-right: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
-            .sidebar-menu li:nth-child(even) { border-right: none; }
-            .sidebar-menu a { text-align: center; padding: 12px 10px; font-size: 0.95rem; }
+            /* 💡 틀어짐 해결 1: 왼쪽 쏠림 방지 (align-items: stretch 추가) */
+            .page-wrapper { flex-direction: column; gap: 30px; margin: 40px auto; align-items: stretch; }
+            
+            /* 💡 틀어짐 해결 2: 우측 본문 영역을 모바일 화면 100%로 꽉 차게 강제 설정 */
+            .page-content { width: 100%; box-sizing: border-box; }
+            
+            /* 거대했던 까만색 사이드바를 스와이프 가능한 예쁜 가로 탭으로 변신! */
+            .sidebar { width: 100%; border: none; box-shadow: none; background: transparent; position: relative; top: 0; }
+            .sidebar-title { display: none; }
+            .sidebar-menu { display: flex; flex-wrap: nowrap; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; border: none; padding: 0 5px 10px 5px; gap: 8px; }
+            .sidebar-menu::-webkit-scrollbar { display: none; } /* 스크롤바 숨김 */
+            .sidebar-menu li { flex: 0 0 auto; border: none !important; }
+            .sidebar-menu a { display: inline-block; padding: 8px 18px; font-size: 0.95rem; font-weight: 700; color: #555; background: #fff; border: 1px solid #ddd; border-radius: 30px; transition: all 0.2s; }
+            .sidebar-menu a.active { background: #9e2a2b; color: #fff; border-color: #9e2a2b; font-weight: 800; }
         }
 
         @media (max-width: 768px) {
-            .navbar { padding: 0 20px; }
-            .nav-menu { display: none; }
-            .nav-contact { font-size: 0.95rem; padding: 8px 15px; }
+            /* 1. 모바일 상단 바 (항상 흰색 고정) */
+            .navbar { height: 60px; padding: 0 15px; background-color: rgba(255,255,255,0.98) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important; }
+            .nav-logo img { height: 35px !important; }
+            
+            /* 햄버거 버튼 (항상 검정색) */
+            .mobile-menu-btn { display: block; background: none; border: none; font-size: 1.8rem; color: #1a1a1a; cursor: pointer; } 
+
+            /* 카드형 팝업 메뉴 */
+            .nav-right {
+                display: none; 
+                position: absolute; 
+                top: 60px; 
+                right: 15px; 
+                width: 200px; 
+                background: white;
+                flex-direction: column; 
+                padding: 10px 0; 
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                border-radius: 12px;
+                border: 1px solid #eaeaea;
+                z-index: 2000;
+            }
+            .nav-right.active { display: flex !important; } /* 무조건 표시되게 강제 */
+            .nav-menu { display: flex; flex-direction: column; width: 100%; gap: 0; }
+            .nav-menu li { width: 100%; border-bottom: 1px solid #f8f9fa; text-align: left !important; }
+            .nav-menu li:last-child { border-bottom: none; }
+            .nav-menu li > a { color: #333 !important; padding: 12px 20px; text-shadow: none; font-size: 1rem; font-weight: 600; }
+            .nav-menu li > a:hover { background-color: #f8f9fa; color: #9e2a2b !important; }
+            
+            .dropdown-menu { position: static; transform: none; box-shadow: none; background-color: #fcf6f6; padding: 0; border-radius: 0; }
+            .dropdown-menu li a { padding: 10px 20px 10px 30px; font-size: 0.9rem; color: #555 !important; }
+            .nav-contact { display: none; }
+
+            /* 배너 및 우측 퀵메뉴 축소 */
             .sub-header-top-text { font-size: 0.9rem; }
             .sub-header h2 { font-size: 1.8rem; }
-            .quick-btn { width: 65px; height: 75px; padding: 8px 4px; }
-            .quick-icon { width: 28px; height: 28px; margin-bottom: 4px; }
-            .naver-text, .kakao-text { font-size: 0.65rem; }
+            .quick-btn { width: 55px; height: 65px; padding: 6px 3px; }
+            .quick-icon { width: 22px; height: 22px; margin-bottom: 4px; }
+            .naver-text, .kakao-text { font-size: 0.6rem; }
 
+            /* 연혁 본문 모바일 비율 조절 */
             .greeting-section { padding: 30px 20px; margin-bottom: 50px; }
             .greeting-section h3 { font-size: 1.1rem; }
             .greeting-section h2 { font-size: 2rem; }
@@ -133,20 +176,26 @@
             .timeline-content { padding: 20px; }
             .timeline-year { font-size: 1.5rem; }
             .timeline-desc { font-size: 1rem; }
+
+/* 💡 모바일 전용 서브 배너 이미지로 교체! */
+            .sub-header { background-image: url('sub_bg_mobile.jpg') !important; }
         }
     </style>
 </head>
 <body>
 
     <nav class="navbar" id="navbar">
+        <!-- 💡 로고 먼저, 햄버거 나중으로 순서 정상 복구! -->
         <a href="index.html" class="nav-logo"><img src="logo_black.png" alt="로고"></a>
-        <div class="nav-right">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        <!-- 💡 id="navRight" 이름표 완벽 부착! -->
+        <div class="nav-right" id="navRight">
             <ul class="nav-menu">
                 <li><a href="history.html">학원 소개 ▾</a>
                     <ul class="dropdown-menu">
                         <li><a href="history.html">인사말/연혁</a></li>
                         <li><a href="features.html">학원 특징</a></li>
-<li><a href="system.html">학습 시스템</a></li>
+                        <li><a href="system.html">학습 시스템</a></li>
                         <li><a href="staff.html">교직원</a></li>
                         <li><a href="location.html">오시는 길</a></li>
                     </ul>
@@ -164,7 +213,8 @@
                     <a href="notice_alert.html">공지사항 ▾</a>
                     <ul class="dropdown-menu">
                         <li><a href="notice_alert.html">알리미</a></li>
-                        <li><a href="notice_special.html">특강</a></li></ul>
+                        <li><a href="notice_special.html">특강</a></li>
+                    </ul>
                 </li>
             </ul>
             <div class="nav-contact">상담문의 📞 032-568-9565</div>
@@ -200,7 +250,7 @@
             <ul class="sidebar-menu">
                 <li><a href="history.html" class="active">인사말/연혁</a></li>
                 <li><a href="features.html">학원 특징</a></li>
-<li><a href="system.html">학습 시스템</a></li>
+                <li><a href="system.html">학습 시스템</a></li>
                 <li><a href="staff.html">교직원</a></li>
                 <li><a href="location.html">오시는 길</a></li>
             </ul>
@@ -300,16 +350,22 @@
 
     <!-- 자바스크립트 영역 -->
     <script>
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            const logoImg = document.getElementById('logo-img');
-            
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-                logoImg.src = 'logo_black.png'; 
-            } else {
-                navbar.classList.remove('scrolled');
-                logoImg.src = 'logo_white.png'; 
+        // 💡 서브페이지 햄버거 메뉴 열기/닫기
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navRight = document.getElementById('navRight');
+
+            if (mobileMenuBtn && navRight) {
+                mobileMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); 
+                    navRight.classList.toggle('active');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!navRight.contains(e.target) && e.target !== mobileMenuBtn) {
+                        navRight.classList.remove('active');
+                    }
+                });
             }
         });
     </script>
