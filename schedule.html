@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        /* 💡 가로 삐져나감 방지 */
+        /* 💡 가로 삐져나감 방지 (공통 규칙) */
         html, body { max-width: 100%; overflow-x: hidden; }
         body { font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; overflow-x: hidden; }
 
@@ -80,10 +80,15 @@
         
         .date-num { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; display: block; }
         
-        .schedule-item { background-color: #fce8e8; border-left: 3px solid #9e2a2b; color: #9e2a2b; font-size: 0.85rem; font-weight: 600; padding: 4px 8px; margin-bottom: 4px; border-radius: 2px; word-break: break-all; line-height: 1.4; }
+        /* 💡 일정 아이템 기본 스타일 (PC용) */
+        .schedule-item { background-color: #fce8e8; border-left: 3px solid #9e2a2b; color: #9e2a2b; font-size: 0.85rem; font-weight: 600; padding: 4px 8px; margin-bottom: 4px; border-radius: 2px; word-break: break-all; line-height: 1.4; cursor: pointer; transition: filter 0.2s; }
+        .schedule-item:hover { filter: brightness(0.95); }
         .schedule-time { color: #555; font-weight: 700; font-size: 0.8rem; margin-right: 4px; }
+        
+        .schedule-desc-text { display: inline; }
+        .no-time { display: none; } /* 시간이 없을 때 나오는 대체 텍스트는 PC에선 숨김 */
 
-        /* ================= 관리자 페이지 (일정 관리) 스타일 ================= */
+        /* ================= 관리자 페이지 스타일 ================= */
         .admin-container { max-width: 800px; margin: 60px auto; padding: 40px; background-color: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eaeaea; display: none; position: relative; box-sizing: border-box;}
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #1a1a1a; padding-bottom: 15px; }
         .admin-header h3 { font-size: 1.8rem; font-weight: 800; color: #9e2a2b; margin: 0; }
@@ -172,7 +177,7 @@
             .quick-icon { width: 22px; height: 22px; margin-bottom: 4px; }
             .naver-text, .kakao-text { font-size: 0.6rem; }
             
-            /* 💡 스마트폰 캘린더 앱 스타일로 달력 다이어트! */
+            /* 💡 스마트폰 달력 다이어트 & 팝업 유도 디자인 */
             .calendar-container { margin: 30px auto; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; }
             .calendar-header { flex-direction: column; align-items: center; gap: 10px; padding: 15px 10px; text-align: center; }
             .calendar-title { font-size: 1.4rem; }
@@ -184,20 +189,33 @@
             .hide-mobile { display: none; }
             .calendar-table th { padding: 8px 0; font-size: 0.85rem; }
             
-            /* 칸 크기 및 안쪽 글자 축소 */
-            .calendar-table td { height: 70px; padding: 3px; }
-            .date-num { font-size: 0.85rem; margin-bottom: 2px; }
+            /* 칸 크기 축소 */
+            .calendar-table td { height: 75px; padding: 3px; }
+            .date-num { font-size: 0.85rem; margin-bottom: 4px; text-align: center; }
+            
+            /* 💡 핵심: 모바일에서는 설명을 숨기고 버튼 모양 캡슐만 남깁니다 */
+            .schedule-desc-text { display: none; } 
+            .no-time { display: inline-block; } /* 시간이 없을 때 나오는 '일정' 텍스트 활성화 */
             
             .schedule-item { 
-                font-size: 0.65rem; 
-                padding: 2px 3px; 
-                border-left-width: 2px; 
-                line-height: 1.2; 
-                letter-spacing: -0.5px; 
-                margin-bottom: 2px;
+                background: none; 
+                border: none; 
+                padding: 0; 
+                margin-bottom: 4px; 
+                text-align: center; 
             }
-            /* 모바일에서는 시간을 위로 올리고 설명을 아래로 */
-            .schedule-time { display: block; font-size: 0.55rem; margin-right: 0; margin-bottom: 1px; color: #777; }
+            .schedule-time { 
+                display: inline-block; 
+                background: #fce8e8; 
+                color: #9e2a2b; 
+                border: 1px solid #fbd5d5; 
+                padding: 3px 6px; 
+                border-radius: 12px; 
+                font-size: 0.65rem; 
+                font-weight: 700; 
+                margin: 0; 
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            }
 
             /* 관리자 화면 모바일 정렬 */
             .admin-container { margin: 30px 15px; padding: 20px; }
@@ -213,7 +231,6 @@
 
     <nav class="navbar" id="navbar">
         <a href="index.html" class="nav-logo"><img src="logo_black.png" alt="로고"></a>
-        <!-- 💡 햄버거 버튼 추가 -->
         <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         <div class="nav-right" id="navRight">
             <ul class="nav-menu">
@@ -280,7 +297,6 @@
         <table class="calendar-table">
             <thead>
                 <tr>
-                    <!-- 💡 모바일에서 영어 요일 숨기기 클래스 추가 -->
                     <th class="color-sun">일<span class="hide-mobile">(SUN)</span></th>
                     <th>월<span class="hide-mobile">(MON)</span></th>
                     <th>화<span class="hide-mobile">(TUE)</span></th>
@@ -305,12 +321,11 @@
             <button class="btn-back" id="closeAdminBtn">달력으로 돌아가기</button>
         </div>
         
-        <!-- 일정 추가/수정 폼 -->
         <div class="admin-form">
             <input type="hidden" id="editId">
             <input type="date" id="newDateInput" required>
             <input type="time" id="newTimeInput" title="시간 선택 (선택사항)">
-            <input type="text" id="newDescInput" placeholder="추가할 일정 내용을 입력하세요 (예: 광복절 휴원)" required>
+            <input type="text" id="newDescInput" placeholder="추가할 일정 내용을 입력하세요" required>
             <button class="btn-submit" id="submitScheduleBtn">등록</button>
             <button class="btn-cancel" id="cancelEditBtn">취소</button>
         </div>
@@ -333,16 +348,25 @@
         </div>
     </footer>
 
-    <!-- 달력 및 관리자 기능 스크립트 (Supabase 연동 + 메뉴 열기 닫기) -->
+    <!-- 💡 일정 상세 팝업창 (기본 숨김) -->
+    <div id="schedulePopupOverlay" class="loading-overlay" style="background: rgba(0,0,0,0.6); z-index: 10001; backdrop-filter: blur(3px); position: fixed;">
+        <div class="popup-content" style="background: #fff; padding: 25px; border-radius: 12px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <h4 id="popupDate" style="margin-top: 0; color: #9e2a2b; font-size: 1.1rem; margin-bottom: 8px; font-weight: 800;"></h4>
+            <div id="popupTime" style="font-size: 0.95rem; font-weight: 700; color: #555; margin-bottom: 15px; background: #f8f9fa; display: inline-block; padding: 4px 12px; border-radius: 20px; border: 1px solid #eee;"></div>
+            <p id="popupDesc" style="font-size: 1.05rem; color: #1a1a1a; word-break: keep-all; margin: 0 0 20px 0; font-weight: 600; line-height: 1.4;"></p>
+            <button onclick="closeSchedulePopup()" style="background: #1a1a1a; color: white; border: none; padding: 10px 0; width: 100%; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem; transition: background 0.3s;">확인</button>
+        </div>
+    </div>
+
+    <!-- 달력 및 관리자 기능 스크립트 -->
     <script>
-        // 상단 네비게이션 스크롤 효과
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 50) navbar.classList.add('scrolled');
             else navbar.classList.remove('scrolled');
         });
 
-        // 💡 모바일 메뉴 열기/닫기 스크립트 추가
+        // 모바일 메뉴 열기/닫기
         document.addEventListener('DOMContentLoaded', () => {
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const navRight = document.getElementById('navRight');
@@ -361,12 +385,30 @@
             }
         });
 
-        // 💡 Supabase 접속 정보
+        // 💡 팝업 열기 / 닫기 함수
+        function showSchedulePopup(date, time, desc) {
+            document.getElementById('popupDate').textContent = date;
+            const timeEl = document.getElementById('popupTime');
+            if(time) {
+                timeEl.textContent = '⏰ ' + time;
+                timeEl.style.display = 'inline-block';
+            } else {
+                timeEl.style.display = 'none';
+            }
+            document.getElementById('popupDesc').textContent = desc;
+            document.getElementById('schedulePopupOverlay').style.display = 'flex';
+        }
+        function closeSchedulePopup() {
+            document.getElementById('schedulePopupOverlay').style.display = 'none';
+        }
+        document.getElementById('schedulePopupOverlay').addEventListener('click', (e) => {
+            if(e.target === document.getElementById('schedulePopupOverlay')) closeSchedulePopup();
+        });
+
         const SUPABASE_URL = 'https://haaiwbjdlqwrfrvsurxi.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhYWl3YmpkbHF3cmZydnN1cnhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MTQ1NjQsImV4cCI6MjEwMjA5MDU2NH0.hiMuLbrgkF2W_-PR5dfwmqI2TAOLi3yJv25_iCMovFE';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // 요소 매핑
         const calendarView = document.getElementById('calendarView');
         const adminView = document.getElementById('adminView');
         const yearSelect = document.getElementById('yearSelect');
@@ -378,11 +420,9 @@
         const submitScheduleBtn = document.getElementById('submitScheduleBtn');
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const adminScheduleList = document.getElementById('adminScheduleList');
-        
         const calendarLoading = document.getElementById('calendarLoading');
         const adminLoading = document.getElementById('adminLoading');
 
-        // 전역 변수 설정
         let currentDate = new Date(2026, 7, 1); 
         let globalSchedules = []; 
 
@@ -465,8 +505,12 @@
                                 let scheduleItem = document.createElement('div');
                                 scheduleItem.className = 'schedule-item';
                                 
-                                let timeText = item.schedule_time ? `<span class="schedule-time">[${item.schedule_time}]</span>` : '';
-                                let descText = item.schedule_desc;
+                                // 💡 클릭 이벤트 추가 (팝업 띄우기)
+                                scheduleItem.onclick = () => showSchedulePopup(item.schedule_date, item.schedule_time, item.schedule_desc);
+                                
+                                // 💡 시간이 없으면 [일정] 이라는 대체 텍스트(no-time)가 나오도록 설정
+                                let timeText = item.schedule_time ? `<span class="schedule-time">[${item.schedule_time}]</span>` : `<span class="schedule-time no-time">[일정]</span>`;
+                                let descText = `<span class="schedule-desc-text">${item.schedule_desc}</span>`;
                                 
                                 scheduleItem.innerHTML = timeText + descText;
                                 cell.appendChild(scheduleItem);
