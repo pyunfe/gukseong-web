@@ -8,11 +8,17 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     
     <style>
+        /* 💡 가로 삐져나감 원천 차단 */
+        html, body { max-width: 100%; overflow-x: hidden; }
         body { font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; overflow-x: hidden; }
 
         /* ================= 공통 레이아웃 ================= */
         .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 100px; background-color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; box-sizing: border-box; z-index: 1000; }
         .nav-logo img { height: 80px; }
+        
+        /* 💡 PC 화면 햄버거 버튼 숨기기 */
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 2rem; cursor: pointer; color: #1a1a1a; }
+
         .nav-right { display: flex; align-items: center; gap: 40px; }
         .nav-menu { display: flex; list-style: none; gap: 30px; margin: 0; padding: 0; align-items: center; }
         .nav-menu li { position: relative; }
@@ -44,24 +50,21 @@
         .footer-info { color: #ccc; font-size: 0.92rem; margin-bottom: 25px; word-break: keep-all; }
         .footer-copyright { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 20px; color: #888; font-size: 0.85rem; }
 
-        /* ================= 서브페이지 공통 배너 (💡 크기/속성 크게 원복 완료) ================= */
+        /* ================= 서브페이지 공통 배너 ================= */
         .sub-header { width: 100%; height: 280px; background-color: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 100px; position: relative; background-image: url('sub_bg.jpg'); background-size: cover; background-position: center; text-align: center; }
         .sub-header::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.55); z-index: 1; }
         .sub-header-content { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 10px; padding: 0 20px; }
         
-        /* 💡 윗글씨 폰트 크기 및 간격 확대 */
         .sub-header-top-text { color: #ffffff; font-size: 1.2rem; font-weight: 500; letter-spacing: 2px; opacity: 0.9; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        
-        /* 💡 아랫글씨 폰트 크기(2.6rem) 및 가장 두꺼운 속성(900)으로 원복 */
         .sub-header h2 { color: #ffffff; font-size: 2.6rem; font-weight: 900; margin: 0; letter-spacing: 1px; text-shadow: 0 2px 8px rgba(0,0,0,0.6); } 
 
         /* ================= 학칙 안내 본문 스타일 ================= */
-        .policy-container { max-width: 900px; margin: 80px auto; padding: 0 20px; }
+        .policy-container { max-width: 900px; margin: 80px auto; padding: 0 20px; box-sizing: border-box; }
         
         .section-title { text-align: center; font-size: 2rem; font-weight: 800; color: #1a1a1a; margin-bottom: 60px; }
         .section-title span { color: #9e2a2b; } 
 
-        .policy-card { background: #ffffff; border-radius: 16px; padding: 45px 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 40px; border: 1px solid #eaeaea; }
+        .policy-card { background: #ffffff; border-radius: 16px; padding: 45px 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 40px; border: 1px solid #eaeaea; box-sizing: border-box; }
         .policy-card h3 { font-size: 1.6rem; color: #1a1a1a; margin-top: 0; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid #f1f1f1; display: flex; align-items: center; gap: 12px; font-weight: 800; }
         .policy-card h3::before { content: ''; display: inline-block; width: 6px; height: 24px; background-color: #9e2a2b; border-radius: 3px; } 
         
@@ -78,23 +81,65 @@
         
         .sub-text { display: block; font-size: 0.95rem; color: #888; margin-top: 6px; font-weight: 400; }
 
+        /* =========================================
+           💡 반응형 설정 (태블릿/모바일 최적화)
+           ========================================= */
         @media (max-width: 768px) {
-            .navbar { padding: 0 20px; }
-            .nav-menu { display: none; }
-            .nav-contact { font-size: 0.95rem; padding: 8px 15px; }
+            /* 1. 모바일 상단 바 (항상 흰색 고정) */
+            .navbar { height: 60px; padding: 0 15px; background-color: rgba(255,255,255,0.98) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important; }
+            .nav-logo img { height: 35px !important; }
             
+            /* 햄버거 버튼 (항상 검정색) */
+            .mobile-menu-btn { display: block; background: none; border: none; font-size: 1.8rem; color: #1a1a1a; cursor: pointer; } 
+
+            /* 카드형 팝업 메뉴 */
+            .nav-right {
+                display: none; 
+                position: absolute; 
+                top: 60px; 
+                right: 15px; 
+                width: 200px; 
+                background: white;
+                flex-direction: column; 
+                padding: 10px 0; 
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                border-radius: 12px;
+                border: 1px solid #eaeaea;
+                z-index: 2000;
+            }
+            .nav-right.active { display: flex !important; }
+            .nav-menu { display: flex; flex-direction: column; width: 100%; gap: 0; }
+            .nav-menu li { width: 100%; border-bottom: 1px solid #f8f9fa; text-align: left !important; }
+            .nav-menu li:last-child { border-bottom: none; }
+            .nav-menu li > a { color: #333 !important; padding: 12px 20px; text-shadow: none; font-size: 1rem; font-weight: 600; }
+            .nav-menu li > a:hover { background-color: #f8f9fa; color: #9e2a2b !important; }
+            
+            .dropdown-menu { position: static; transform: none; box-shadow: none; background-color: #fcf6f6; padding: 0; border-radius: 0; }
+            .dropdown-menu li a { padding: 10px 20px 10px 30px; font-size: 0.9rem; color: #555 !important; }
+            .nav-contact { display: none; }
+
+            /* 💡 서브 배너 이미지 모바일용 교체 & 텍스트 크기 조정 */
+            .sub-header { background-image: url('sub_bg_mobile.jpg') !important; }
             .sub-header-top-text { font-size: 0.9rem; }
             .sub-header h2 { font-size: 1.8rem; }
             
-            .quick-btn { width: 65px; height: 75px; padding: 8px 4px; }
-            .quick-icon { width: 28px; height: 28px; margin-bottom: 4px; }
-            .naver-text, .kakao-text { font-size: 0.65rem; }
+            /* 💡 미니 퀵메뉴 */
+            .quick-btn { width: 55px; height: 65px; padding: 6px 3px; }
+            .quick-icon { width: 22px; height: 22px; margin-bottom: 4px; }
+            .naver-text, .kakao-text { font-size: 0.6rem; }
             
-            .policy-container { margin: 50px auto; }
-            .policy-card { padding: 30px 25px; }
+            /* 💡 텍스트 자동 정렬 & 스마트 줄바꿈 적용 (PC용 br 태그 숨김) */
+            .policy-list li br, .section-title br { display: none; }
+            .policy-card h3, .policy-list li, .section-title { word-break: keep-all; }
+
+            /* 학칙 안내 본문 비율 조정 (가로 삐져나감 방지) */
+            .policy-container { width: 100%; margin: 40px auto; padding: 0 15px; box-sizing: border-box; }
+            .section-title { font-size: 1.6rem; margin-bottom: 30px; }
+            
+            .policy-card { width: 100%; padding: 25px 20px; margin-bottom: 25px; box-sizing: border-box; }
             .policy-card h3 { font-size: 1.4rem; margin-bottom: 20px; }
-            .policy-list li { font-size: 1rem; margin-bottom: 20px; }
-            .sub-text { font-size: 0.85rem; }
+            .policy-list li { font-size: 0.95rem; margin-bottom: 15px; }
+            .sub-text { font-size: 0.85rem; margin-top: 4px; }
         }
     </style>
 </head>
@@ -102,7 +147,10 @@
 
     <nav class="navbar" id="navbar">
         <a href="index.html" class="nav-logo"><img src="logo_black.png" alt="로고"></a>
-        <div class="nav-right">
+        <!-- 💡 햄버거 버튼 추가 -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        <!-- 💡 메뉴 박스 id 부여 -->
+        <div class="nav-right" id="navRight">
             <ul class="nav-menu">
                 <li><a href="history.html">학원 소개 ▾</a>
                     <ul class="dropdown-menu">
@@ -133,7 +181,6 @@
         </div>
     </nav>
 
-    <!-- 우측 고정 퀵 메뉴 -->
     <div class="quick-menu">
         <a href="https://blog.naver.com/econ555" target="_blank" class="quick-btn naver-btn" title="네이버 블로그">
             <img src="icon_blog.png" alt="블로그 아이콘" class="quick-icon">
@@ -145,10 +192,8 @@
         </a>
     </div>
 
-    <!-- 서브페이지 배너 -->
     <div class="sub-header">
         <div class="sub-header-content">
-            <!-- 💡 이 부분 텍스트 속성이 큼직하게 적용됩니다 -->
             <span class="sub-header-top-text">올바른 학습 환경을 위한 약속</span>
             <h2>학칙 안내</h2>
         </div>
@@ -209,6 +254,26 @@
             </div>
         </div>
     </footer>
+    
+    <!-- 💡 메뉴 열기 닫기 안전 스크립트 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navRight = document.getElementById('navRight');
 
+            if (mobileMenuBtn && navRight) {
+                mobileMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); 
+                    navRight.classList.toggle('active');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!navRight.contains(e.target) && e.target !== mobileMenuBtn) {
+                        navRight.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
