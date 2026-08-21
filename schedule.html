@@ -6,15 +6,20 @@
     <title>학원 일정 - 국성국어</title>
     
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <!-- 💡 Supabase 연동 라이브러리 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
+        /* 💡 가로 삐져나감 방지 */
+        html, body { max-width: 100%; overflow-x: hidden; }
         body { font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; overflow-x: hidden; }
 
         /* ================= 공통 레이아웃 ================= */
         .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 100px; background-color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; box-sizing: border-box; z-index: 1000; }
         .nav-logo img { height: 80px; }
+        
+        /* 💡 PC 화면 햄버거 버튼 숨기기 */
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 2rem; cursor: pointer; color: #1a1a1a; }
+
         .nav-right { display: flex; align-items: center; gap: 40px; }
         .nav-menu { display: flex; list-style: none; gap: 30px; margin: 0; padding: 0; align-items: center; }
         .nav-menu li { position: relative; }
@@ -48,9 +53,8 @@
         .sub-header h2 { color: #ffffff; font-size: 2.6rem; font-weight: 900; margin: 0; letter-spacing: 1px; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
 
         /* ================= 달력 (일정표) 스타일 ================= */
-        .calendar-container { max-width: 1200px; margin: 60px auto; padding: 0 20px; background-color: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #eaeaea; overflow: hidden; position: relative; }
+        .calendar-container { max-width: 1200px; margin: 60px auto; padding: 0 20px; background-color: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #eaeaea; overflow: hidden; position: relative; box-sizing: border-box; }
         
-        /* 💡 로딩 오버레이 추가 */
         .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 10; font-size: 1.2rem; font-weight: 700; color: #9e2a2b; display: none; }
         
         .calendar-header { display: flex; justify-content: space-between; align-items: flex-end; padding: 30px; border-bottom: 2px solid #333; }
@@ -67,7 +71,7 @@
         .calendar-table th { padding: 15px 0; font-size: 1rem; font-weight: 700; color: #555; background-color: #f8f9fa; border-bottom: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; text-align: center; }
         .calendar-table th:last-child { border-right: none; }
         
-        .calendar-table td { border-bottom: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; height: 120px; vertical-align: top; padding: 10px; position: relative; width: 14.28%; }
+        .calendar-table td { border-bottom: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; height: 120px; vertical-align: top; padding: 10px; position: relative; width: 14.28%; box-sizing: border-box; }
         .calendar-table td:last-child { border-right: none; }
         .calendar-table tr:last-child td { border-bottom: none; }
 
@@ -80,7 +84,7 @@
         .schedule-time { color: #555; font-weight: 700; font-size: 0.8rem; margin-right: 4px; }
 
         /* ================= 관리자 페이지 (일정 관리) 스타일 ================= */
-        .admin-container { max-width: 800px; margin: 60px auto; padding: 40px; background-color: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eaeaea; display: none; position: relative;}
+        .admin-container { max-width: 800px; margin: 60px auto; padding: 40px; background-color: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eaeaea; display: none; position: relative; box-sizing: border-box;}
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #1a1a1a; padding-bottom: 15px; }
         .admin-header h3 { font-size: 1.8rem; font-weight: 800; color: #9e2a2b; margin: 0; }
         
@@ -88,7 +92,7 @@
         .btn-back:hover { background-color: #333; }
 
         .admin-form { display: flex; gap: 10px; margin-bottom: 40px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #eee; align-items: stretch; }
-        .admin-form input[type="date"], .admin-form input[type="time"], .admin-form input[type="text"] { padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; outline: none; font-family: 'Pretendard', sans-serif; }
+        .admin-form input[type="date"], .admin-form input[type="time"], .admin-form input[type="text"] { padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; outline: none; font-family: 'Pretendard', sans-serif; box-sizing: border-box;}
         .admin-form input[type="time"] { width: 140px; }
         .admin-form input[type="text"] { flex: 1; }
         .admin-form input:focus { border-color: #9e2a2b; }
@@ -121,23 +125,81 @@
         .footer-info { color: #ccc; font-size: 0.92rem; margin-bottom: 25px; word-break: keep-all; }
         .footer-copyright { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 20px; color: #888; font-size: 0.85rem; }
 
-        @media (max-width: 992px) {
-            .calendar-header { flex-direction: column; align-items: flex-start; gap: 15px; padding: 20px; }
-            .calendar-table td { height: 80px; padding: 5px; }
-            .date-num { font-size: 0.95rem; }
-            .schedule-item { font-size: 0.75rem; padding: 2px 4px; border-left-width: 2px; }
-        }
-
+        /* =========================================
+           💡 반응형 설정 (태블릿/모바일 최적화)
+           ========================================= */
         @media (max-width: 768px) {
-            .navbar { padding: 0 20px; }
-            .nav-menu { display: none; }
-            .nav-contact { font-size: 0.95rem; padding: 8px 15px; }
+            /* 1. 모바일 상단 바 (항상 흰색 고정) */
+            .navbar { height: 60px; padding: 0 15px; background-color: rgba(255,255,255,0.98) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important; }
+            .nav-logo img { height: 35px !important; }
+            
+            /* 햄버거 버튼 (항상 검정색) */
+            .mobile-menu-btn { display: block; background: none; border: none; font-size: 1.8rem; color: #1a1a1a; cursor: pointer; } 
+
+            /* 카드형 팝업 메뉴 */
+            .nav-right {
+                display: none; 
+                position: absolute; 
+                top: 60px; 
+                right: 15px; 
+                width: 200px; 
+                background: white;
+                flex-direction: column; 
+                padding: 10px 0; 
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                border-radius: 12px;
+                border: 1px solid #eaeaea;
+                z-index: 2000;
+            }
+            .nav-right.active { display: flex !important; }
+            .nav-menu { display: flex; flex-direction: column; width: 100%; gap: 0; }
+            .nav-menu li { width: 100%; border-bottom: 1px solid #f8f9fa; text-align: left !important; }
+            .nav-menu li:last-child { border-bottom: none; }
+            .nav-menu li > a { color: #333 !important; padding: 12px 20px; text-shadow: none; font-size: 1rem; font-weight: 600; }
+            .nav-menu li > a:hover { background-color: #f8f9fa; color: #9e2a2b !important; }
+            
+            .dropdown-menu { position: static; transform: none; box-shadow: none; background-color: #fcf6f6; padding: 0; border-radius: 0; }
+            .dropdown-menu li a { padding: 10px 20px 10px 30px; font-size: 0.9rem; color: #555 !important; }
+            .nav-contact { display: none; }
+
+            /* 서브 배너 이미지 모바일용 교체 & 텍스트 크기 조정 */
+            .sub-header { background-image: url('sub_bg_mobile.jpg') !important; }
             .sub-header-top-text { font-size: 0.9rem; }
             .sub-header h2 { font-size: 1.8rem; }
-            .quick-btn { width: 65px; height: 75px; padding: 8px 4px; }
-            .quick-icon { width: 28px; height: 28px; margin-bottom: 4px; }
-            .naver-text, .kakao-text { font-size: 0.65rem; }
             
+            /* 미니 퀵메뉴 */
+            .quick-btn { width: 55px; height: 65px; padding: 6px 3px; }
+            .quick-icon { width: 22px; height: 22px; margin-bottom: 4px; }
+            .naver-text, .kakao-text { font-size: 0.6rem; }
+            
+            /* 💡 스마트폰 캘린더 앱 스타일로 달력 다이어트! */
+            .calendar-container { margin: 30px auto; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; }
+            .calendar-header { flex-direction: column; align-items: center; gap: 10px; padding: 15px 10px; text-align: center; }
+            .calendar-title { font-size: 1.4rem; }
+            .calendar-controls { flex-wrap: wrap; justify-content: center; }
+            .calendar-controls select { padding: 6px 8px; font-size: 0.9rem; }
+            .btn-add { padding: 6px 12px; font-size: 0.9rem; }
+
+            /* 요일 영어 숨김 */
+            .hide-mobile { display: none; }
+            .calendar-table th { padding: 8px 0; font-size: 0.85rem; }
+            
+            /* 칸 크기 및 안쪽 글자 축소 */
+            .calendar-table td { height: 70px; padding: 3px; }
+            .date-num { font-size: 0.85rem; margin-bottom: 2px; }
+            
+            .schedule-item { 
+                font-size: 0.65rem; 
+                padding: 2px 3px; 
+                border-left-width: 2px; 
+                line-height: 1.2; 
+                letter-spacing: -0.5px; 
+                margin-bottom: 2px;
+            }
+            /* 모바일에서는 시간을 위로 올리고 설명을 아래로 */
+            .schedule-time { display: block; font-size: 0.55rem; margin-right: 0; margin-bottom: 1px; color: #777; }
+
+            /* 관리자 화면 모바일 정렬 */
             .admin-container { margin: 30px 15px; padding: 20px; }
             .admin-form { flex-direction: column; }
             .admin-form input[type="time"] { width: 100%; }
@@ -151,7 +213,9 @@
 
     <nav class="navbar" id="navbar">
         <a href="index.html" class="nav-logo"><img src="logo_black.png" alt="로고"></a>
-        <div class="nav-right">
+        <!-- 💡 햄버거 버튼 추가 -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        <div class="nav-right" id="navRight">
             <ul class="nav-menu">
                 <li><a href="history.html">학원 소개 ▾</a>
                     <ul class="dropdown-menu">
@@ -183,19 +247,17 @@
         </div>
     </nav>
 
-    <!-- 우측 고정 퀵 메뉴 -->
     <div class="quick-menu">
-        <a href="https://blog.naver.com/econ555" target="_blank" class="quick-btn naver-btn">
+        <a href="https://blog.naver.com/econ555" target="_blank" class="quick-btn naver-btn" title="네이버 블로그">
             <img src="icon_blog.png" alt="블로그 아이콘" class="quick-icon">
             <span class="naver-text">네이버<br>블로그</span>
         </a>
-        <a href="http://pf.kakao.com/_xaKZXX" target="_blank" class="quick-btn kakao-btn">
+        <a href="http://pf.kakao.com/_xaKZXX" target="_blank" class="quick-btn kakao-btn" title="카카오톡 상담">
             <img src="icon_kakao.png" alt="카카오톡 아이콘" class="quick-icon">
             <span class="kakao-text">카카오톡<br>채널</span>
         </a>
     </div>
 
-    <!-- 서브페이지 배너 -->
     <div class="sub-header">
         <div class="sub-header-content">
             <span class="sub-header-top-text">국성국어의 1년</span>
@@ -205,7 +267,6 @@
 
     <!-- 1. 달력 뷰 (기본 화면) -->
     <div id="calendarView" class="calendar-container">
-        <!-- 💡 로딩 화면 -->
         <div id="calendarLoading" class="loading-overlay">일정 데이터를 불러오는 중입니다...</div>
         
         <div class="calendar-header">
@@ -219,13 +280,14 @@
         <table class="calendar-table">
             <thead>
                 <tr>
-                    <th class="color-sun">일(SUN)</th>
-                    <th>월(MON)</th>
-                    <th>화(TUE)</th>
-                    <th>수(WED)</th>
-                    <th>목(THU)</th>
-                    <th>금(FRI)</th>
-                    <th class="color-sat">토(SAT)</th>
+                    <!-- 💡 모바일에서 영어 요일 숨기기 클래스 추가 -->
+                    <th class="color-sun">일<span class="hide-mobile">(SUN)</span></th>
+                    <th>월<span class="hide-mobile">(MON)</span></th>
+                    <th>화<span class="hide-mobile">(TUE)</span></th>
+                    <th>수<span class="hide-mobile">(WED)</span></th>
+                    <th>목<span class="hide-mobile">(THU)</span></th>
+                    <th>금<span class="hide-mobile">(FRI)</span></th>
+                    <th class="color-sat">토<span class="hide-mobile">(SAT)</span></th>
                 </tr>
             </thead>
             <tbody id="calendarBody">
@@ -234,9 +296,8 @@
         </table>
     </div>
 
-    <!-- 2. 관리자 페이지 뷰 (비밀번호 입력 시 노출) -->
+    <!-- 2. 관리자 페이지 뷰 -->
     <div id="adminView" class="admin-container">
-        <!-- 💡 로딩 화면 -->
         <div id="adminLoading" class="loading-overlay" style="border-radius: 12px;">처리 중...</div>
         
         <div class="admin-header">
@@ -246,7 +307,6 @@
         
         <!-- 일정 추가/수정 폼 -->
         <div class="admin-form">
-            <!-- Supabase 데이터 수정을 위해 id값을 숨겨둠 -->
             <input type="hidden" id="editId">
             <input type="date" id="newDateInput" required>
             <input type="time" id="newTimeInput" title="시간 선택 (선택사항)">
@@ -273,7 +333,7 @@
         </div>
     </footer>
 
-    <!-- 달력 및 관리자 기능 스크립트 (Supabase 버전) -->
+    <!-- 달력 및 관리자 기능 스크립트 (Supabase 연동 + 메뉴 열기 닫기) -->
     <script>
         // 상단 네비게이션 스크롤 효과
         window.addEventListener('scroll', () => {
@@ -282,7 +342,26 @@
             else navbar.classList.remove('scrolled');
         });
 
-        // 💡 Supabase 접속 정보 (원장님 정보 유지)
+        // 💡 모바일 메뉴 열기/닫기 스크립트 추가
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navRight = document.getElementById('navRight');
+
+            if (mobileMenuBtn && navRight) {
+                mobileMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); 
+                    navRight.classList.toggle('active');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!navRight.contains(e.target) && e.target !== mobileMenuBtn) {
+                        navRight.classList.remove('active');
+                    }
+                });
+            }
+        });
+
+        // 💡 Supabase 접속 정보
         const SUPABASE_URL = 'https://haaiwbjdlqwrfrvsurxi.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhYWl3YmpkbHF3cmZydnN1cnhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MTQ1NjQsImV4cCI6MjEwMjA5MDU2NH0.hiMuLbrgkF2W_-PR5dfwmqI2TAOLi3yJv25_iCMovFE';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -305,9 +384,8 @@
 
         // 전역 변수 설정
         let currentDate = new Date(2026, 7, 1); 
-        let globalSchedules = []; // 서버에서 불러온 전체 데이터 원본
+        let globalSchedules = []; 
 
-        // ================= 1. 달력 로직 (Supabase 연동) =================
         function initControls() {
             for (let i = 2024; i <= 2030; i++) {
                 let option = document.createElement('option');
@@ -325,24 +403,19 @@
             monthSelect.addEventListener('change', updateCalendar);
         }
 
-        // 💡 서버에서 데이터 불러오기 함수
         async function fetchSchedules() {
             calendarLoading.style.display = 'flex';
             try {
-                // Supabase에서 gukseong_calendar 테이블의 모든 데이터를 날짜순으로 가져옴
                 const { data, error } = await _supabase
                     .from('gukseong_calendar')
                     .select('*')
                     .order('schedule_date', { ascending: true });
                 
                 if (error) throw error;
-                globalSchedules = data; // 전역 변수에 저장
-                
-                // 데이터 가져오기가 완료되면 화면을 다시 그림
+                globalSchedules = data; 
                 renderCalendar(parseInt(yearSelect.value), parseInt(monthSelect.value));
             } catch (err) {
                 console.error('일정 불러오기 실패:', err);
-                // 테이블이 없거나 에러날 경우를 대비해 빈 배열로 유지하고 화면은 그림
                 globalSchedules = [];
                 renderCalendar(parseInt(yearSelect.value), parseInt(monthSelect.value));
             } finally {
@@ -350,7 +423,6 @@
             }
         }
 
-        // 달력 화면 그리기
         function renderCalendar(year, month) {
             calendarBody.innerHTML = '';
             calendarTitle.textContent = `${year}년 ${month}월 일정표`;
@@ -358,7 +430,6 @@
             const firstDay = new Date(year, month - 1, 1).getDay(); 
             const lastDate = new Date(year, month, 0).getDate(); 
             
-            // 전역 배열 데이터를 날짜(문자열)를 키(key)로 하는 객체로 변환하여 사용하기 편하게 만듦
             const schedulesObj = {};
             globalSchedules.forEach(item => {
                 if(!schedulesObj[item.schedule_date]) {
@@ -389,7 +460,6 @@
 
                         let dateString = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
                         
-                        // 해당 날짜에 일정이 있다면
                         if (schedulesObj[dateString]) {
                             schedulesObj[dateString].forEach(item => {
                                 let scheduleItem = document.createElement('div');
@@ -412,11 +482,9 @@
         }
 
         function updateCalendar() {
-            // 연도나 월을 바꿀때는 이미 받아온 전역 데이터로 화면만 다시 그림 (빠름)
             renderCalendar(parseInt(yearSelect.value), parseInt(monthSelect.value));
         }
 
-        // ================= 2. 관리자 페이지 로직 (Supabase 연동) =================
         addScheduleBtn.addEventListener('click', () => {
             const password = prompt("관리자 비밀번호를 입력해주세요.");
             if (password === "8566") {
@@ -436,7 +504,7 @@
         });
 
         function resetForm() {
-            document.getElementById('editId').value = ''; // 숨겨둔 ID 초기화
+            document.getElementById('editId').value = ''; 
             document.getElementById('newDateInput').value = '';
             document.getElementById('newTimeInput').value = '';
             document.getElementById('newDescInput').value = '';
@@ -446,7 +514,6 @@
 
         cancelEditBtn.addEventListener('click', resetForm);
 
-        // 💡 서버에 데이터 등록/수정 전송
         submitScheduleBtn.addEventListener('click', async () => {
             const editId = document.getElementById('editId').value;
             const dateInput = document.getElementById('newDateInput').value;
@@ -458,11 +525,10 @@
                 return;
             }
 
-            adminLoading.style.display = 'flex'; // 로딩 표시
+            adminLoading.style.display = 'flex'; 
 
             try {
                 if (editId) {
-                    // ID가 있으면 기존 데이터 수정 (Update)
                     const { error } = await _supabase
                         .from('gukseong_calendar')
                         .update({ schedule_date: dateInput, schedule_time: timeInput, schedule_desc: descInput })
@@ -471,7 +537,6 @@
                     if (error) throw error;
                     alert("일정이 수정되었습니다.");
                 } else {
-                    // ID가 없으면 새 데이터 추가 (Insert)
                     const { error } = await _supabase
                         .from('gukseong_calendar')
                         .insert([{ schedule_date: dateInput, schedule_time: timeInput, schedule_desc: descInput }]);
@@ -481,7 +546,6 @@
                 }
                 
                 resetForm();
-                // 서버에 변동이 생겼으니 전체 데이터를 새로 불러오고 리스트 갱신
                 await fetchSchedules(); 
                 renderAdminList();
 
@@ -493,7 +557,6 @@
             }
         });
 
-        // 💡 관리자 리스트 화면 그리기 (전역 데이터 활용)
         function renderAdminList() {
             adminScheduleList.innerHTML = '';
             
@@ -530,7 +593,6 @@
                 let delBtn = document.createElement('button');
                 delBtn.className = 'btn-delete';
                 delBtn.textContent = '삭제';
-                // 💡 서버에서 데이터 삭제 연동
                 delBtn.onclick = async () => {
                     if(confirm(`[${item.schedule_date}] ${item.schedule_desc}\n이 일정을 정말 삭제하시겠습니까?`)) {
                         adminLoading.style.display = 'flex';
@@ -542,7 +604,6 @@
                             
                             if (error) throw error;
                             
-                            // 삭제 성공 시 데이터 다시 불러오고 리스트 갱신
                             if (document.getElementById('editId').value == item.id) resetForm();
                             await fetchSchedules();
                             renderAdminList();
@@ -564,10 +625,8 @@
             });
         }
 
-        // 페이지 로드 시 초기 실행 세팅
         initControls();
-        fetchSchedules(); // 스크립트가 실행될 때 Supabase에서 데이터를 가져와서 달력을 그림
-
+        fetchSchedules(); 
     </script>
 </body>
 </html>
