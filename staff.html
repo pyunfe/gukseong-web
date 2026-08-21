@@ -107,6 +107,9 @@
             .sidebar-menu li { flex: 0 0 auto; border: none !important; }
             .sidebar-menu a { display: inline-block; padding: 8px 18px; font-size: 0.95rem; font-weight: 700; color: #555; background: #fff; border: 1px solid #ddd; border-radius: 30px; transition: all 0.2s; }
             .sidebar-menu a.active { background: #9e2a2b; color: #fff; border-color: #9e2a2b; font-weight: 800; }
+            
+            .staff-grid-3 { grid-template-columns: repeat(2, 1fr); }
+            .director-card { width: calc((100% - 20px) / 2); } 
         }
 
         @media (max-width: 768px) {
@@ -156,26 +159,20 @@
             .main-section-title { font-size: 1.8rem; margin-bottom: 30px; }
             .sub-section-title { font-size: 1.4rem; }
 
-            /* 💡 모바일에서도 PC처럼 3등분 꽉 차게 유지! */
-            .staff-grid-3 { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
-            .director-card { width: calc((100% - 16px) / 3) !important; } 
-            
-            /* 카드 안의 글씨와 사진이 3등분에 맞게 앙증맞게 축소됩니다 */
-            .staff-img { height: 110px; border-bottom: 2px solid #9e2a2b; }
-            .staff-info { padding: 10px 8px; }
-            .staff-info .tag { font-size: 0.55rem; padding: 2px 5px; margin-bottom: 5px; }
-            .staff-info h3 { font-size: 0.9rem; margin: 0 0 4px 0; }
-            .staff-info p { font-size: 0.65rem; line-height: 1.3; margin-bottom: 6px; word-break: keep-all; }
-            .staff-history li { font-size: 0.6rem; padding-left: 10px; margin-bottom: 4px; line-height: 1.2; word-break: keep-all; }
-            .staff-history li::before { font-size: 0.6rem; }
+            /* 모바일에서 카드 세로 1줄 배치 */
+            .staff-grid-3 { grid-template-columns: 1fr; gap: 20px; }
+            .director-card { width: 100%; } 
         }
     </style>
 </head>
 <body>
 
     <nav class="navbar" id="navbar">
+        <!-- 💡 로고, 햄버거 순서 맞춤 -->
         <a href="index.html" class="nav-logo"><img src="logo_black.png" alt="로고"></a>
         <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        
+        <!-- 💡 메뉴 상자에 아이디(navRight) 부여 -->
         <div class="nav-right" id="navRight">
             <ul class="nav-menu">
                 <li><a href="history.html">학원 소개 ▾</a>
@@ -255,7 +252,6 @@
                 </div>
             </div>
 
-            <!-- 중등부 강사진 유지 -->
             <div class="sub-section-title">중등부 강사진</div>
             <div class="staff-grid-3">
                 <div class="staff-card">
@@ -438,6 +434,8 @@
             </div>
         </div>
     </footer>
+    
+    <!-- 💡 서브페이지용 안전한 메뉴 스크립트 -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
