@@ -128,8 +128,7 @@
             .quick-icon { width: 22px; height: 22px; margin-bottom: 4px; }
             .naver-text, .kakao-text { font-size: 0.6rem; }
             
-            /* 💡 텍스트 자동 정렬 & 스마트 줄바꿈 적용 (PC용 br 태그 숨김) */
-            .policy-list li br, .section-title br { display: none; }
+            /* 💡 텍스트 자동 정렬 (br 태그 숨김 해제하여 원래 줄바꿈 복구!) */
             .policy-card h3, .policy-list li, .section-title { word-break: keep-all; }
 
             /* 학칙 안내 본문 비율 조정 (가로 삐져나감 방지) */
@@ -147,9 +146,7 @@
 
     <nav class="navbar" id="navbar">
         <a href="index.html" class="nav-logo"><img src="logo_black.png" alt="로고"></a>
-        <!-- 💡 햄버거 버튼 추가 -->
         <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
-        <!-- 💡 메뉴 박스 id 부여 -->
         <div class="nav-right" id="navRight">
             <ul class="nav-menu">
                 <li><a href="history.html">학원 소개 ▾</a>
@@ -181,6 +178,7 @@
         </div>
     </nav>
 
+    <!-- 우측 고정 퀵 메뉴 -->
     <div class="quick-menu">
         <a href="https://blog.naver.com/econ555" target="_blank" class="quick-btn naver-btn" title="네이버 블로그">
             <img src="icon_blog.png" alt="블로그 아이콘" class="quick-icon">
@@ -192,6 +190,7 @@
         </a>
     </div>
 
+    <!-- 서브페이지 배너 -->
     <div class="sub-header">
         <div class="sub-header-content">
             <span class="sub-header-top-text">올바른 학습 환경을 위한 약속</span>
@@ -202,7 +201,7 @@
     <!-- 학칙 안내 본문 영역 -->
     <div class="policy-container">
         
-        <div class="section-title">국성국어 · 문해력마루<br><span>학원 수칙 안내사항</span></div>
+        <div class="section-title">국성국어전문학원 · 문해력마루<br><span>학원 수칙 안내사항</span></div>
         
         <!-- 1. 기본 안내 -->
         <div class="policy-card">
