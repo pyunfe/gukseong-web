@@ -134,28 +134,13 @@
            💡 반응형 설정 (태블릿/모바일 최적화)
            ========================================= */
         @media (max-width: 768px) {
-            /* 1. 모바일 상단 바 (항상 흰색 고정) */
+            /* 모바일 상단 바 */
             .navbar { height: 60px; padding: 0 15px; background-color: rgba(255,255,255,0.98) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important; }
             .nav-logo img { height: 35px !important; }
-            
-            /* 햄버거 버튼 (항상 검정색) */
             .mobile-menu-btn { display: block; background: none; border: none; font-size: 1.8rem; color: #1a1a1a; cursor: pointer; } 
 
             /* 카드형 팝업 메뉴 */
-            .nav-right {
-                display: none; 
-                position: absolute; 
-                top: 60px; 
-                right: 15px; 
-                width: 200px; 
-                background: white;
-                flex-direction: column; 
-                padding: 10px 0; 
-                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-                border-radius: 12px;
-                border: 1px solid #eaeaea;
-                z-index: 2000;
-            }
+            .nav-right { display: none; position: absolute; top: 60px; right: 15px; width: 200px; background: white; flex-direction: column; padding: 10px 0; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid #eaeaea; z-index: 2000; }
             .nav-right.active { display: flex !important; }
             .nav-menu { display: flex; flex-direction: column; width: 100%; gap: 0; }
             .nav-menu li { width: 100%; border-bottom: 1px solid #f8f9fa; text-align: left !important; }
@@ -177,7 +162,7 @@
             .quick-icon { width: 22px; height: 22px; margin-bottom: 4px; }
             .naver-text, .kakao-text { font-size: 0.6rem; }
             
-            /* 💡 스마트폰 달력 다이어트 & 팝업 유도 디자인 */
+            /* 💡 스마트폰 달력 - 동그라미 알림 뱃지로 완벽 변신! */
             .calendar-container { margin: 30px auto; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; }
             .calendar-header { flex-direction: column; align-items: center; gap: 10px; padding: 15px 10px; text-align: center; }
             .calendar-title { font-size: 1.4rem; }
@@ -189,32 +174,39 @@
             .hide-mobile { display: none; }
             .calendar-table th { padding: 8px 0; font-size: 0.85rem; }
             
-            /* 칸 크기 축소 */
-            .calendar-table td { height: 75px; padding: 3px; }
-            .date-num { font-size: 0.85rem; margin-bottom: 4px; text-align: center; }
+            /* 달력 칸 크기 및 글씨 축소, 가운데 정렬 */
+            .calendar-table td { height: 65px; padding: 6px 2px; text-align: center; vertical-align: top; }
+            .date-num { font-size: 0.9rem; margin-bottom: 4px; display: block; text-align: center; }
             
-            /* 💡 핵심: 모바일에서는 설명을 숨기고 버튼 모양 캡슐만 남깁니다 */
+            /* 💡 핵심: 텍스트는 숨기고 앙증맞은 동그라미 점으로 변경 */
             .schedule-desc-text { display: none; } 
-            .no-time { display: inline-block; } /* 시간이 없을 때 나오는 '일정' 텍스트 활성화 */
+            .no-time { display: none; } 
             
+            /* 점들을 터치하기 쉽게 가로로 예쁘게 나열 */
             .schedule-item { 
+                display: inline-block; 
+                padding: 4px; 
+                margin: 0; 
                 background: none; 
                 border: none; 
-                padding: 0; 
-                margin-bottom: 4px; 
-                text-align: center; 
+                cursor: pointer; 
             }
+            
+            /* 실제 보여지는 동그라미 알림 뱃지 */
             .schedule-time { 
-                display: inline-block; 
-                background: #fce8e8; 
-                color: #9e2a2b; 
-                border: 1px solid #fbd5d5; 
-                padding: 3px 6px; 
-                border-radius: 12px; 
-                font-size: 0.65rem; 
-                font-weight: 700; 
-                margin: 0; 
-                box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+                display: block; 
+                width: 7px; 
+                height: 7px; 
+                background-color: #9e2a2b; 
+                border-radius: 50%; 
+                color: transparent; 
+                font-size: 0; 
+                line-height: 0;
+                overflow: hidden; 
+                padding: 0; 
+                border: none; 
+                box-shadow: none; 
+                margin: 0;
             }
 
             /* 관리자 화면 모바일 정렬 */
@@ -282,7 +274,7 @@
         </div>
     </div>
 
-    <!-- 1. 달력 뷰 (기본 화면) -->
+    <!-- 달력 뷰 -->
     <div id="calendarView" class="calendar-container">
         <div id="calendarLoading" class="loading-overlay">일정 데이터를 불러오는 중입니다...</div>
         
@@ -312,7 +304,7 @@
         </table>
     </div>
 
-    <!-- 2. 관리자 페이지 뷰 -->
+    <!-- 관리자 페이지 뷰 -->
     <div id="adminView" class="admin-container">
         <div id="adminLoading" class="loading-overlay" style="border-radius: 12px;">처리 중...</div>
         
@@ -348,7 +340,7 @@
         </div>
     </footer>
 
-    <!-- 💡 일정 상세 팝업창 (기본 숨김) -->
+    <!-- 💡 일정 상세 팝업창 -->
     <div id="schedulePopupOverlay" class="loading-overlay" style="background: rgba(0,0,0,0.6); z-index: 10001; backdrop-filter: blur(3px); position: fixed;">
         <div class="popup-content" style="background: #fff; padding: 25px; border-radius: 12px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
             <h4 id="popupDate" style="margin-top: 0; color: #9e2a2b; font-size: 1.1rem; margin-bottom: 8px; font-weight: 800;"></h4>
@@ -366,7 +358,6 @@
             else navbar.classList.remove('scrolled');
         });
 
-        // 모바일 메뉴 열기/닫기
         document.addEventListener('DOMContentLoaded', () => {
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const navRight = document.getElementById('navRight');
@@ -385,7 +376,7 @@
             }
         });
 
-        // 💡 팝업 열기 / 닫기 함수
+        // 팝업 열기 / 닫기
         function showSchedulePopup(date, time, desc) {
             document.getElementById('popupDate').textContent = date;
             const timeEl = document.getElementById('popupTime');
@@ -505,10 +496,10 @@
                                 let scheduleItem = document.createElement('div');
                                 scheduleItem.className = 'schedule-item';
                                 
-                                // 💡 클릭 이벤트 추가 (팝업 띄우기)
+                                // 클릭 이벤트 (팝업 띄우기)
                                 scheduleItem.onclick = () => showSchedulePopup(item.schedule_date, item.schedule_time, item.schedule_desc);
                                 
-                                // 💡 시간이 없으면 [일정] 이라는 대체 텍스트(no-time)가 나오도록 설정
+                                // 모바일에서는 시간이든 뭐든 글씨를 투명하게 숨기고 점으로만 보여줌
                                 let timeText = item.schedule_time ? `<span class="schedule-time">[${item.schedule_time}]</span>` : `<span class="schedule-time no-time">[일정]</span>`;
                                 let descText = `<span class="schedule-desc-text">${item.schedule_desc}</span>`;
                                 
