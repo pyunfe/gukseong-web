@@ -6,7 +6,6 @@
     <title>국성국어</title>
     
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <!-- 💡 Supabase 연동 라이브러리 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
@@ -59,7 +58,17 @@
             height: 80px;
         }
 
-        .nav-right { display: flex; align-items: center; gap: 40px; }
+        /* 💡 모바일용 햄버거 메뉴 버튼 (PC에선 숨김) */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #1a1a1a;
+            cursor: pointer;
+        }
+
+        .nav-right { display: flex; align-items: center; gap: 40px; transition: all 0.3s ease; }
         .nav-menu { display: flex; list-style: none; gap: 30px; margin: 0; padding: 0; align-items: center; }
 
         .nav-menu li {
@@ -145,12 +154,6 @@
             text-shadow: none;
         }
 
-        @media (max-width: 992px) {
-            .nav-menu { display: none; }
-            .navbar { padding: 0 20px; }
-            .nav-contact { font-size: 0.95rem; padding: 8px 15px; }
-        }
-
         /* =========================================
            2. 메인 화면 (슬라이드 없는 한 장 고정)
            ========================================= */
@@ -197,11 +200,10 @@
             background-color: transparent; 
         }
 
-        /* 💡 1:1 정사각형 배너 공통 스타일 */
         .banner-box {
             position: relative;
-            aspect-ratio: 1 / 1; /* 1:1 비율 적용 */
-            height: auto; /* 고정 높이 해제 */
+            aspect-ratio: 1 / 1; 
+            height: auto; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -255,11 +257,10 @@
         .banner-box:hover h3 { color: #9e2a2b; }
         .banner-box:hover .banner-icon { transform: scale(1.1); }
 
-        /* 💡 카드뉴스 전용 스타일 (1:1 비율 적용) */
         .card-box {
             position: relative;
-            aspect-ratio: 1 / 1; /* 1:1 비율 적용 */
-            height: auto; /* 고정 높이 해제 */
+            aspect-ratio: 1 / 1; 
+            height: auto; 
             display: block;
             box-sizing: border-box;
             background-color: #f1f1f1;
@@ -298,26 +299,8 @@
         
         .consult-details strong { color: #222; }
 
-        @media (max-width: 1100px) {
-            .banner-section { margin-top: -100px; }
-            .banner-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        }
-        
-        @media (max-width: 768px) {
-            .banner-section { margin-top: -60px; padding: 0 15px; }
-            .lower-section { padding: 0 15px; }
-            /* 💡 모바일에서는 거대한 1칸 대신 2칸 바둑판 배열로 수정 */
-            .banner-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-            .banner-box, .card-box { padding: 10px; }
-            .banner-box h3 { font-size: 1.2rem; }
-            .banner-box .sub-title { font-size: 0.85rem; margin-bottom: 8px; }
-            .banner-icon { width: 30px; height: 30px; }
-            .consult-phone { font-size: 1.1rem; margin: 4px 0 8px 0; }
-            .consult-details { font-size: 0.75rem; line-height: 1.4; }
-        }
-
         /* =========================================
-           4. 우측 고정 퀵 메뉴 (이미지 아이콘 + 텍스트 조합)
+           4. 우측 고정 퀵 메뉴
            ========================================= */
         .quick-menu {
             position: fixed;
@@ -354,33 +337,10 @@
             margin-bottom: 6px;
         }
 
-        /* 네이버 블로그 */
-        .naver-btn {
-            background-color: #2bc381; 
-        }
-        .naver-text {
-            color: #ffffff;
-            font-size: 0.75rem;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        /* 카카오톡 */
-        .kakao-btn {
-            background-color: #FEE500; 
-        }
-        .kakao-text {
-            color: #3a1d1d;
-            font-size: 0.75rem;
-            font-weight: 800;
-            line-height: 1.2;
-        }
-
-        @media (max-width: 768px) {
-            .quick-btn { width: 65px; height: 75px; padding: 8px 4px; }
-            .quick-icon { width: 28px; height: 28px; margin-bottom: 4px; }
-            .naver-text, .kakao-text { font-size: 0.65rem; }
-        }
+        .naver-btn { background-color: #2bc381; }
+        .naver-text { color: #ffffff; font-size: 0.75rem; font-weight: 700; line-height: 1.2; }
+        .kakao-btn { background-color: #FEE500; }
+        .kakao-text { color: #3a1d1d; font-size: 0.75rem; font-weight: 800; line-height: 1.2; }
 
         /* =========================================
            5. 하단 푸터 (Footer) 영역
@@ -401,7 +361,7 @@
         }
 
         /* =========================================
-           6. 💡 팝업 (1장 슬라이드/캐러셀) 스타일
+           6. 새소식 팝업
            ========================================= */
         .popup-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -410,7 +370,7 @@
             backdrop-filter: blur(3px);
         }
         .popup-content {
-            background: #fff; width: 90%; max-width: 450px; /* 1장만 예쁘게 보이도록 폭 축소 */
+            background: #fff; width: 90%; max-width: 450px;
             border-radius: 12px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             position: relative;
         }
@@ -426,23 +386,17 @@
         }
         .popup-close-btn:hover { color: #333; }
         
-        /* 슬라이더 영역 */
         .popup-slider-container {
             position: relative; width: 100%; overflow: hidden; border-radius: 8px; border: 1px solid #eaeaea; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-        .popup-slider-track {
-            display: flex; width: 100%; transition: transform 0.4s ease-in-out;
-        }
-        .popup-card {
-            flex: 0 0 100%; width: 100%; display: block; position: relative; text-decoration: none; 
-        }
+        .popup-slider-track { display: flex; width: 100%; transition: transform 0.4s ease-in-out; }
+        .popup-card { flex: 0 0 100%; width: 100%; display: block; position: relative; text-decoration: none; }
         .popup-thumb { width: 100%; aspect-ratio: 1 / 1; background-size: cover; background-position: center; }
         
         .popup-overlay-box { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         .popup-card:hover .popup-overlay-box { opacity: 1; }
         .popup-overlay-box span { color: #fff; font-size: 1.1rem; font-weight: 800; border: 2px solid #fff; padding: 8px 16px; border-radius: 30px; background: rgba(0,0,0,0.3); }
 
-        /* 좌우 이동 버튼 */
         .slider-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
             background: rgba(0,0,0,0.5); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.3s;
@@ -451,13 +405,8 @@
         .slider-arrow.prev { left: 10px; }
         .slider-arrow.next { right: 10px; }
 
-        /* 슬라이더 인디케이터 (점) */
-        .slider-dots {
-            position: absolute; bottom: 15px; left: 0; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 10;
-        }
-        .dot {
-            width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-        }
+        .slider-dots { position: absolute; bottom: 15px; left: 0; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 10; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
         .dot.active { background: #9e2a2b; width: 20px; border-radius: 5px; }
 
         .popup-footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; color: #555; }
@@ -465,7 +414,79 @@
         .popup-close-text { background: #333; color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.3s; }
         .popup-close-text:hover { background: #1a1a1a; }
 
+        /* =========================================
+           7. 💡 모바일 최적화 (768px 이하)
+           ========================================= */
+        @media (max-width: 1100px) {
+            .banner-section { margin-top: -100px; }
+            .banner-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        }
+        
         @media (max-width: 768px) {
+            /* 1. 모바일 상단 바 스타일 */
+            .navbar { height: 85px; padding: 0 20px; background-color: transparent !important; box-shadow: none !important; }
+            .nav-logo img { height: 60px !important; }
+            .mobile-menu-btn { display: block; color: white; text-shadow: 0 2px 5px rgba(0,0,0,0.5); } 
+            
+            /* 스크롤 시 변하는 스타일 */
+            .navbar.scrolled { background-color: rgba(255,255,255,0.98) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important; }
+            .navbar.scrolled .mobile-menu-btn { color: #1a1a1a; text-shadow: none; }
+            .navbar.scrolled .nav-logo img { height: 50px !important; }
+
+            /* 💡 2번 스타일: 우측 상단에 톡 나타나는 깔끔한 카드형 팝업 메뉴 */
+            .nav-right {
+                display: none; 
+                position: absolute; 
+                top: 75px; 
+                right: 15px; 
+                width: 200px; 
+                background: white;
+                flex-direction: column; 
+                padding: 10px 0; 
+                box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+                border-radius: 12px;
+                border: 1px solid #eaeaea;
+                z-index: 2000;
+            }
+            .nav-right.active { display: flex; }
+            .nav-menu { display: flex; flex-direction: column; width: 100%; gap: 0; }
+            .nav-menu li { width: 100%; border-bottom: 1px solid #f8f9fa; text-align: left; }
+            .nav-menu li:last-child { border-bottom: none; }
+            .nav-menu li > a { color: #333 !important; padding: 12px 20px; text-shadow: none; font-size: 1rem; font-weight: 600; }
+            .nav-menu li > a:hover { background-color: #f8f9fa; color: #9e2a2b !important; }
+            
+            /* 작은 화면에서 드롭다운 서브메뉴(학원소개▾ 등) 처리 */
+            .dropdown-menu {
+                position: static;
+                transform: none;
+                box-shadow: none;
+                background-color: #fcf6f6;
+                padding: 0;
+                border-radius: 0;
+            }
+            .dropdown-menu li a { padding: 10px 20px 10px 30px; font-size: 0.9rem; color: #555 !important; }
+
+            .nav-contact { display: none; } 
+            
+            /* 2. 메인 이미지 (모바일 세로형) */
+            .hero { background-image: url('main_bg_mobile.jpg') !important; min-height: 100vh; }
+
+            /* 3. 배너 최적화 (알리미3 + 상담1) */
+            .banner-section { display: none; } 
+            .location-banner { display: none !important; } 
+            
+            .lower-section { margin-top: -60px; padding: 0 15px; }
+            .banner-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            
+            .banner-box, .card-box { padding: 15px 10px; }
+            .banner-box h3 { font-size: 1.3rem; margin-bottom: 8px; }
+            .consult-phone { font-size: 1.15rem; margin: 6px 0 10px 0; }
+            .consult-details { font-size: 0.8rem; line-height: 1.5; }
+
+            .quick-btn { width: 55px; height: 65px; padding: 6px 3px; }
+            .quick-icon { width: 22px; height: 22px; margin-bottom: 4px; }
+            .naver-text, .kakao-text { font-size: 0.6rem; }
+            
             .popup-content { padding: 20px; }
             .popup-title { font-size: 1.3rem; }
         }
@@ -477,7 +498,11 @@
         <a href="index.html" class="nav-logo">
             <img id="logo-img" src="logo_white.png" alt="로고">
         </a>
-        <div class="nav-right">
+        
+        <!-- 💡 모바일 햄버거 버튼 추가 -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+
+        <div class="nav-right" id="navRight">
             <ul class="nav-menu">
                 <li>
                     <a href="history.html">학원 소개 ▾</a>
@@ -512,7 +537,7 @@
         </div>
     </nav>
 
-    <!-- 우측 고정 퀵 메뉴 (아이콘 + 텍스트) -->
+    <!-- 우측 고정 퀵 메뉴 -->
     <div class="quick-menu">
         <a href="https://blog.naver.com/econ555" target="_blank" class="quick-btn naver-btn" title="네이버 블로그">
             <img src="icon_blog.png" alt="블로그 아이콘" class="quick-icon">
@@ -520,7 +545,7 @@
         </a>
         <a href="http://pf.kakao.com/_xaKZXX" target="_blank" class="quick-btn kakao-btn" title="카카오톡 상담">
             <img src="icon_kakao.png" alt="카카오톡 아이콘" class="quick-icon">
-            <span class="kakao-text">카카오톡<br>상담</span>
+            <span class="kakao-text">카카오톡<br>채널</span>
         </a>
     </div>
 
@@ -528,7 +553,7 @@
     <header class="hero">
     </header>
 
-    <!-- 1. 윗줄 5칸 배너 -->
+    <!-- 1. 윗줄 5칸 배너 (모바일에서는 숨김 처리됨) -->
     <section class="banner-section">
         <div class="banner-grid">
             <a href="history.html" class="banner-box">
@@ -559,14 +584,14 @@
         </div>
     </section>
 
-    <!-- 2. 아랫줄 (카드뉴스3 동적 연동 + 배너2) -->
+    <!-- 2. 아랫줄 (알리미3 + 상담1) -->
     <section class="lower-section">
         <div class="banner-grid">
             
-            <!-- 알리미(notice_alert.html)와 연동되어 자동으로 3개가 채워지는 영역 -->
             <div id="mainAlertGrid" style="display: contents;"></div>
 
-            <a href="location.html" class="banner-box">
+            <!-- 💡 모바일에서 숨기기 위해 클래스(location-banner) 추가 -->
+            <a href="location.html" class="banner-box location-banner">
                 <h3>LOCATION</h3>
                 <p class="sub-title">오시는 길</p>
                 <svg class="banner-icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
@@ -597,7 +622,7 @@
         </div>
     </footer>
 
-    <!-- 💡 새소식 팝업창 HTML 구조 (슬라이드 버전) -->
+    <!-- 새소식 팝업창 HTML 구조 -->
     <div id="popupOverlay" class="popup-overlay">
         <div class="popup-content">
             <div class="popup-header">
@@ -609,10 +634,8 @@
                 <div class="popup-slider-track" id="popupTrack">
                     <!-- 자바스크립트를 통해 카드뉴스가 자동으로 채워집니다. -->
                 </div>
-                <!-- 좌우 이동 화살표 -->
                 <button class="slider-arrow prev" onclick="movePopupSlide(-1)">&#10094;</button>
                 <button class="slider-arrow next" onclick="movePopupSlide(1)">&#10095;</button>
-                <!-- 하단 동그라미 인디케이터 -->
                 <div class="slider-dots" id="sliderDots"></div>
             </div>
             
@@ -625,23 +648,43 @@
         </div>
     </div>
 
-    <!-- 자바스크립트 영역 -->
     <script>
+        // 💡 1. 햄버거 메뉴 팝업 및 바깥 클릭 시 닫기 (안전 모드)
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navRight = document.getElementById('navRight');
+
+            if (mobileMenuBtn && navRight) {
+                mobileMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // 클릭 신호 꼬임 방지
+                    navRight.classList.toggle('active');
+                });
+
+                // 메뉴가 열려있을 때 화면 다른 곳(바깥)을 누르면 닫기
+                document.addEventListener('click', (e) => {
+                    if (!navRight.contains(e.target) && e.target !== mobileMenuBtn) {
+                        navRight.classList.remove('active');
+                    }
+                });
+            }
+        });
+
+        // 💡 2. PC & 모바일 공통 스크롤 시 네비게이션바 변환 및 로고 변경
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
             const logoImg = document.getElementById('logo-img');
             
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
-                logoImg.src = 'logo_black.png'; 
+                if (logoImg) logoImg.src = 'logo_black.png'; 
             } else {
                 navbar.classList.remove('scrolled');
-                logoImg.src = 'logo_white.png'; 
+                if (logoImg) logoImg.src = 'logo_white.png'; 
             }
         });
 
         // ==========================================
-        // 💡 Supabase에서 알리미 데이터 불러오기
+        // 💡 3. Supabase에서 알리미 데이터 불러오기 및 팝업 (기존과 동일)
         // ==========================================
         const SUPABASE_URL = 'https://haaiwbjdlqwrfrvsurxi.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhYWl3YmpkbHF3cmZydnN1cnhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MTQ1NjQsImV4cCI6MjEwMjA5MDU2NH0.hiMuLbrgkF2W_-PR5dfwmqI2TAOLi3yJv25_iCMovFE';
@@ -653,7 +696,6 @@
 
         async function fetchMainAlerts() {
             try {
-                // gukseong_alerts 테이블에서 최신글 3개만 가져오기
                 const { data, error } = await _supabase
                     .from('gukseong_alerts')
                     .select('*')
@@ -664,7 +706,7 @@
                 renderMainAlerts(data || []);
             } catch (err) {
                 console.error('메인 알리미 불러오기 실패:', err);
-                renderMainAlerts([]); // 실패해도 에러 방지를 위해 빈 배열로 화면 구성
+                renderMainAlerts([]); 
             }
         }
 
@@ -680,7 +722,6 @@
 
             totalSlides = latestPosts.length;
 
-            // 1. 하단 배너용 3칸 생성 (게시글이 모자라도 빈칸으로 3칸 유지)
             for(let i = 0; i < 3; i++) {
                 const post = latestPosts[i];
                 const card = document.createElement('a');
@@ -700,7 +741,6 @@
                 grid.appendChild(card);
             }
 
-            // 2. 팝업 슬라이더용 카드 생성
             latestPosts.forEach((post, index) => {
                 const popupCard = document.createElement('a');
                 popupCard.className = 'popup-card';
@@ -712,7 +752,6 @@
                 `;
                 if(popupTrack) popupTrack.appendChild(popupCard);
 
-                // 인디케이터(점) 생성
                 if(sliderDots) {
                     const dot = document.createElement('div');
                     dot.className = index === 0 ? 'dot active' : 'dot';
@@ -721,26 +760,23 @@
                 }
             });
 
-            // 게시물이 1개라도 있으면 슬라이드 셋팅 및 팝업 띄우기
             if(totalSlides > 0) {
                 currentSlide = 0;
                 updateSlidePosition();
-                startSlideTimer(); // 자동 슬라이드 시작
+                startSlideTimer(); 
                 checkPopupCookie();
             } else {
-                // 게시물이 없으면 팝업창 내부에 안내 문구
                 const popupSliderContainer = document.getElementById('popupSliderContainer');
                 if(popupSliderContainer) popupSliderContainer.innerHTML = '<div style="padding:40px 0; text-align:center; color:#888; font-weight:600;">새로운 소식이 곧 업데이트 됩니다.</div>';
             }
         }
 
-        // --- 슬라이드 조작 함수 ---
         window.movePopupSlide = function(direction) {
             currentSlide += direction;
             if (currentSlide < 0) currentSlide = totalSlides - 1;
             if (currentSlide >= totalSlides) currentSlide = 0;
             updateSlidePosition();
-            resetSlideTimer(); // 수동 이동 시 자동 타이머 초기화
+            resetSlideTimer(); 
         }
 
         window.goToSlide = function(index) {
@@ -752,11 +788,9 @@
         function updateSlidePosition() {
             const track = document.getElementById('popupTrack');
             if(track) {
-                // 1장 크기인 100% 만큼 좌우로 밀어줌
                 track.style.transform = `translateX(-${currentSlide * 100}%)`;
             }
             
-            // 하단 점(dot) 활성화 상태 업데이트
             const dots = document.querySelectorAll('.dot');
             dots.forEach((dot, index) => {
                 if(index === currentSlide) dot.classList.add('active');
@@ -764,9 +798,8 @@
             });
         }
 
-        // --- 3초 자동 넘김 (타이머) ---
         function startSlideTimer() {
-            if(totalSlides > 1) { // 2장 이상일 때만 자동 슬라이드
+            if(totalSlides > 1) { 
                 slideInterval = setInterval(() => {
                     movePopupSlide(1);
                 }, 3000);
@@ -778,16 +811,12 @@
             startSlideTimer();
         }
 
-        // 마우스 올리면 일시정지
         const popupSliderContainer = document.getElementById('popupSliderContainer');
         if(popupSliderContainer) {
             popupSliderContainer.addEventListener('mouseenter', () => clearInterval(slideInterval));
             popupSliderContainer.addEventListener('mouseleave', startSlideTimer);
         }
 
-        // ==========================================
-        // 💡 팝업 '오늘 하루 보지 않기' 쿠키 제어 로직
-        // ==========================================
         const popupOverlay = document.getElementById('popupOverlay');
         const chkHideToday = document.getElementById('chkHideToday');
 
@@ -800,21 +829,24 @@
         window.closePopup = function() {
             if (chkHideToday && chkHideToday.checked) {
                 const date = new Date();
-                date.setHours(23, 59, 59, 999); // 오늘 밤 11시 59분 59초까지
+                date.setHours(23, 59, 59, 999); 
                 document.cookie = "hideGukseongPopup=Y; expires=" + date.toUTCString() + "; path=/";
             }
-            popupOverlay.style.display = 'none';
+            if(popupOverlay) popupOverlay.style.display = 'none';
         }
 
-        document.getElementById('btnClosePopup').addEventListener('click', closePopup);
-        document.getElementById('btnClosePopupText').addEventListener('click', closePopup);
+        const btnClosePopup = document.getElementById('btnClosePopup');
+        const btnClosePopupText = document.getElementById('btnClosePopupText');
+        
+        if (btnClosePopup) btnClosePopup.addEventListener('click', closePopup);
+        if (btnClosePopupText) btnClosePopupText.addEventListener('click', closePopup);
 
-        // 팝업 밖 어두운 곳 클릭해도 닫히게 설정
-        popupOverlay.addEventListener('click', (e) => {
-            if(e.target === popupOverlay) closePopup();
-        });
+        if (popupOverlay) {
+            popupOverlay.addEventListener('click', (e) => {
+                if(e.target === popupOverlay) closePopup();
+            });
+        }
 
-        // 페이지 로딩 시 초기 실행 (Supabase에서 알리미 데이터 불러오기)
         fetchMainAlerts();
     </script>
 </body>

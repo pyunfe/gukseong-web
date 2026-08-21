@@ -19,7 +19,6 @@
         .nav-menu li > a { color: #333; text-decoration: none; font-size: 1.05rem; font-weight: 700; transition: color 0.3s ease; display: block; padding: 10px 0; }
         .nav-menu li > a:hover { color: #9e2a2b; }
         
-        /* 💡 수정된 부분: list-style: none; 명확히 적용 */
         .dropdown-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background-color: white; min-width: 160px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-radius: 8px; padding: 10px 0; list-style: none; margin: 0; z-index: 1001; }
         .nav-menu li:hover .dropdown-menu { display: block; }
         .dropdown-menu li { width: 100%; text-align: center; }
@@ -173,8 +172,25 @@
         <!-- 우측 시간표 본문 -->
         <main class="page-content">
             
-            <!-- 중학교 1학년 -->
-            <div class="grade-title">중학교 1학년</div>
+            <!-- 예비중 1학년 (새로 추가됨) -->
+            <div class="grade-title">예비중 1학년</div>
+            
+            <div class="teacher-group">
+                <div class="teacher-name">황성웅 원장님</div>
+                <div class="schedule-grid">
+                    <div class="schedule-card">
+                        <h4 class="school-name">예비중1</h4>
+                        <div class="time-slot"><span class="time-badge">토요일</span> 오후 2시 - 오후 5시</div>
+                    </div>
+                    <div class="schedule-card">
+                        <h4 class="school-name">예비중1</h4>
+                        <div class="time-slot"><span class="time-badge">일요일</span> 오후 2시 - 오후 5시</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 중학교 1학년 (여백 추가) -->
+            <div class="grade-title" style="margin-top: 80px;">중학교 1학년</div>
             
             <div class="teacher-group">
                 <div class="teacher-name">정다운T</div>
@@ -210,7 +226,7 @@
                 <div class="schedule-grid">
                     <div class="schedule-card">
                         <h4 class="school-name">초은중</h4>
-                        <div class="time-slot"><span class="time-badge">토요일</span> 오후 6시 - 오후 9시</div>
+                        <div class="time-slot"><span class="time-badge">수요일</span> 오후 4시 - 오후 7시</div>
                     </div>
                     <div class="schedule-card">
                         <h4 class="school-name">청람중 / 루원중</h4>
@@ -218,7 +234,11 @@
                     </div>
                     <div class="schedule-card">
                         <h4 class="school-name">경연중 / 신현중</h4>
-                        <div class="time-slot"><span class="time-badge">일요일</span> 오후 6시 - 오후 9시</div>
+                        <div class="time-slot"><span class="time-badge">일요일</span> 오전 10시 - 오후 1시</div>
+</div>
+                    <div class="schedule-card">
+                        <h4 class="school-name">신현여중</h4>
+                        <div class="time-slot"><span class="time-badge">토요일</span> 오후 6시 - 오후 9시</div>
                     </div>
                 </div>
             </div>
@@ -244,6 +264,21 @@
             <!-- 중학교 3학년 -->
             <div class="grade-title" style="margin-top: 80px;">중학교 3학년</div>
             
+            <!-- 예비고 1학년 (원장님) -->
+            <div class="teacher-group">
+                <div class="teacher-name">황성웅 원장님</div>
+                <div class="schedule-grid">
+                    <div class="schedule-card">
+                        <h4 class="school-name">예비고1</h4>
+                        <div class="time-slot"><span class="time-badge">토요일</span> 오전 10시 - 오후 1시</div>
+                    </div>
+                    <div class="schedule-card">
+                        <h4 class="school-name">예비고1</h4>
+                        <div class="time-slot"><span class="time-badge">일요일</span> 오후 6시 - 오후 9시</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="teacher-group">
                 <div class="teacher-name">김신형T</div>
                 <div class="schedule-grid">
