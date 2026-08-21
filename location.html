@@ -8,11 +8,17 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     
     <style>
+        /* 💡 가로 삐져나감 방지 */
+        html, body { max-width: 100%; overflow-x: hidden; }
         body { font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; overflow-x: hidden; }
 
         /* ================= 공통 레이아웃 ================= */
         .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 100px; background-color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; box-sizing: border-box; z-index: 1000; }
         .nav-logo img { height: 80px; }
+        
+        /* 💡 PC 화면 햄버거 버튼 숨기기 */
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 2rem; cursor: pointer; color: #1a1a1a; }
+
         .nav-right { display: flex; align-items: center; gap: 40px; }
         .nav-menu { display: flex; list-style: none; gap: 30px; margin: 0; padding: 0; align-items: center; }
         .nav-menu li { position: relative; }
@@ -69,15 +75,13 @@
         .section-title { text-align: center; font-size: 2rem; font-weight: 800; color: #1a1a1a; margin-top: 0; margin-bottom: 40px; }
         .section-title span { color: #9e2a2b; }
 
-        .location-wrapper { display: flex; flex-direction: column; gap: 40px; width: 100%; }
+        .location-wrapper { display: flex; flex-direction: column; gap: 40px; width: 100%; box-sizing: border-box; }
         
-        /* 💡 box-sizing 추가하여 너비 오차 완벽 해결 */
         .map-container { width: 100%; background-color: #fff; padding: 10px; border-radius: 8px; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
         .map-container iframe, .root_daum_roughmap { width: 100%; border: none; }
 
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; box-sizing: border-box; width: 100%; }
         
-        /* 💡 box-sizing 추가하여 너비 오차 완벽 해결 */
         .info-box { background: #fff; padding: 30px 25px; border-radius: 8px; border: 1px solid #eee; box-shadow: 0 5px 20px rgba(0,0,0,0.03); box-sizing: border-box; }
         .info-box h4 { font-size: 1.3rem; font-weight: 800; margin: 0 0 20px 0; color: #1a1a1a; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f1f1f1; padding-bottom: 15px; }
         .info-box h4 svg { width: 22px; height: 22px; fill: #9e2a2b; }
@@ -85,28 +89,74 @@
         .info-content p { font-size: 1rem; color: #444; line-height: 1.8; margin: 0 0 10px 0; word-break: keep-all; }
         .info-content strong { color: #9e2a2b; display: inline-block; width: 70px; }
 
+        /* =========================================
+           💡 반응형 설정 (태블릿/모바일 최적화)
+           ========================================= */
         @media (max-width: 992px) {
-            .page-wrapper { flex-direction: column; gap: 40px; margin: 50px auto; }
-            .sidebar { width: 100%; }
-            .sidebar-menu { display: flex; flex-wrap: wrap; }
-            .sidebar-menu li { flex: 1 1 50%; border-right: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
-            .sidebar-menu li:nth-child(even) { border-right: none; }
-            .sidebar-menu a { text-align: center; padding: 12px 10px; font-size: 0.95rem; }
+            .page-wrapper { flex-direction: column; gap: 30px; margin: 40px auto; align-items: stretch; }
+            .page-content { width: 100%; box-sizing: border-box; }
             
-            .info-grid { grid-template-columns: 1fr; }
+            /* 사이드바 가로 스와이프 탭 */
+            .sidebar { width: 100%; border: none; box-shadow: none; background: transparent; position: relative; top: 0; }
+            .sidebar-title { display: none; }
+            .sidebar-menu { display: flex; flex-wrap: nowrap; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; border: none; padding: 0 5px 10px 5px; gap: 8px; }
+            .sidebar-menu::-webkit-scrollbar { display: none; }
+            .sidebar-menu li { flex: 0 0 auto; border: none !important; }
+            .sidebar-menu a { display: inline-block; padding: 8px 18px; font-size: 0.95rem; font-weight: 700; color: #555; background: #fff; border: 1px solid #ddd; border-radius: 30px; transition: all 0.2s; }
+            .sidebar-menu a.active { background: #9e2a2b; color: #fff; border-color: #9e2a2b; font-weight: 800; }
+            
+            .info-grid { grid-template-columns: 1fr; width: 100%; box-sizing: border-box; }
         }
 
         @media (max-width: 768px) {
-            .navbar { padding: 0 20px; }
-            .nav-menu { display: none; }
-            .nav-contact { font-size: 0.95rem; padding: 8px 15px; }
+            /* 1. 모바일 상단 바 (항상 흰색 고정) */
+            .navbar { height: 60px; padding: 0 15px; background-color: rgba(255,255,255,0.98) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important; }
+            .nav-logo img { height: 35px !important; }
+            
+            /* 햄버거 버튼 (항상 검정색) */
+            .mobile-menu-btn { display: block; background: none; border: none; font-size: 1.8rem; color: #1a1a1a; cursor: pointer; } 
+
+            /* 카드형 팝업 메뉴 */
+            .nav-right {
+                display: none; 
+                position: absolute; 
+                top: 60px; 
+                right: 15px; 
+                width: 200px; 
+                background: white;
+                flex-direction: column; 
+                padding: 10px 0; 
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                border-radius: 12px;
+                border: 1px solid #eaeaea;
+                z-index: 2000;
+            }
+            .nav-right.active { display: flex !important; }
+            .nav-menu { display: flex; flex-direction: column; width: 100%; gap: 0; }
+            .nav-menu li { width: 100%; border-bottom: 1px solid #f8f9fa; text-align: left !important; }
+            .nav-menu li:last-child { border-bottom: none; }
+            .nav-menu li > a { color: #333 !important; padding: 12px 20px; text-shadow: none; font-size: 1rem; font-weight: 600; }
+            .nav-menu li > a:hover { background-color: #f8f9fa; color: #9e2a2b !important; }
+            
+            .dropdown-menu { position: static; transform: none; box-shadow: none; background-color: #fcf6f6; padding: 0; border-radius: 0; }
+            .dropdown-menu li a { padding: 10px 20px 10px 30px; font-size: 0.9rem; color: #555 !important; }
+            .nav-contact { display: none; }
+
+            /* 서브 배너 및 퀵메뉴 축소 */
+            .sub-header { background-image: url('sub_bg_mobile.jpg') !important; }
             .sub-header-top-text { font-size: 0.9rem; }
             .sub-header h2 { font-size: 1.8rem; }
-            .quick-btn { width: 65px; height: 75px; padding: 8px 4px; }
-            .quick-icon { width: 28px; height: 28px; margin-bottom: 4px; }
-            .naver-text, .kakao-text { font-size: 0.65rem; }
+            .quick-btn { width: 55px; height: 65px; padding: 6px 3px; }
+            .quick-icon { width: 22px; height: 22px; margin-bottom: 4px; }
+            .naver-text, .kakao-text { font-size: 0.6rem; }
             
-            .info-box { padding: 25px 20px; }
+            /* 💡 텍스트 자동 정렬 & 스마트 줄바꿈 적용 */
+            .page-content p br, .info-content p br { display: none; }
+            .page-content h2, .page-content h3, .page-content p, .info-content p { word-break: keep-all; }
+            
+            .section-title { font-size: 1.6rem; margin-bottom: 30px; }
+            .info-box { padding: 25px 20px; width: 100%; box-sizing: border-box; }
+            .map-container { height: 300px !important; } /* 모바일에서 지도 높이 살짝 축소 */
         }
     </style>
 </head>
@@ -114,13 +164,16 @@
 
     <nav class="navbar" id="navbar">
         <a href="index.html" class="nav-logo"><img src="logo_black.png" alt="로고"></a>
-        <div class="nav-right">
+        <!-- 💡 햄버거 버튼 추가 -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        <!-- 💡 메뉴 박스 id 부착 -->
+        <div class="nav-right" id="navRight">
             <ul class="nav-menu">
                 <li><a href="history.html">학원 소개 ▾</a>
                     <ul class="dropdown-menu">
                         <li><a href="history.html">인사말/연혁</a></li>
                         <li><a href="features.html">학원 특징</a></li>
-<li><a href="system.html">학습 시스템</a></li>
+                        <li><a href="system.html">학습 시스템</a></li>
                         <li><a href="staff.html">교직원</a></li>
                         <li><a href="location.html">오시는 길</a></li>
                     </ul>
@@ -138,7 +191,8 @@
                     <a href="notice_alert.html">공지사항 ▾</a>
                     <ul class="dropdown-menu">
                         <li><a href="notice_alert.html">알리미</a></li>
-                        <li><a href="notice_special.html">특강</a></li></ul>
+                        <li><a href="notice_special.html">특강</a></li>
+                    </ul>
                 </li>
             </ul>
             <div class="nav-contact">상담문의 📞 032-568-9565</div>
@@ -163,23 +217,18 @@
         </div>
     </div>
 
-    <!-- 좌우 분할 레이아웃 -->
     <div class="page-wrapper">
-        
-        <!-- 좌측 사이드바 -->
         <aside class="sidebar">
             <h2 class="sidebar-title">학원 소개</h2>
             <ul class="sidebar-menu">
                 <li><a href="history.html">인사말/연혁</a></li>
                 <li><a href="features.html">학원 특징</a></li>
-<li><a href="system.html">학습 시스템</a></li>
+                <li><a href="system.html">학습 시스템</a></li>
                 <li><a href="staff.html">교직원</a></li>
-                <!-- 💡 현재 페이지 활성화 -->
                 <li><a href="location.html" class="active">오시는 길</a></li>
             </ul>
         </aside>
 
-        <!-- 우측 본문 -->
         <main class="page-content">
             <div class="section-title">국성국어전문학원 <span>오시는 길</span></div>
             
@@ -243,16 +292,24 @@
             </div>
         </div>
     </footer>
+    
+    <!-- 💡 메뉴 열기 닫기 스크립트 -->
     <script>
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            const logoImg = document.getElementById('logo-img');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-                logoImg.src = 'logo_black.png'; 
-            } else {
-                navbar.classList.remove('scrolled');
-                logoImg.src = 'logo_white.png'; 
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navRight = document.getElementById('navRight');
+
+            if (mobileMenuBtn && navRight) {
+                mobileMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); 
+                    navRight.classList.toggle('active');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!navRight.contains(e.target) && e.target !== mobileMenuBtn) {
+                        navRight.classList.remove('active');
+                    }
+                });
             }
         });
     </script>
