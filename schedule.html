@@ -604,6 +604,13 @@
             }
         });
 
+        // 💡 엔터키로 로그인하기 기능 추가
+        document.getElementById('loginPassword').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('btnDoLogin').click();
+            }
+        });
+
         // 💡 일정 관리 버튼 클릭 시 (세션 확인)
         addScheduleBtn.addEventListener('click', () => {
             if (!session) {

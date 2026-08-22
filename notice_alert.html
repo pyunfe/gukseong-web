@@ -392,6 +392,13 @@
             }
         });
 
+        // 💡 엔터키로 로그인하기 기능 추가
+        document.getElementById('loginPassword').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('btnDoLogin').click();
+            }
+        });
+
         // 게시글 불러오기 (DB에 저장된 순서인 created_at 오름차순으로 가져와서 사용자가 바꾼 순서 유지)
         async function fetchPosts() {
             boardLoading.style.display = 'flex';
