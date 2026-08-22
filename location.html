@@ -114,7 +114,18 @@
             .nav-logo img { height: 50px !important; }
             
             /* 햄버거 버튼 (항상 검정색) */
-            .mobile-menu-btn { display: block; background: none; border: none; font-size: 1.8rem; color: #1a1a1a; cursor: pointer; } 
+            .mobile-menu-btn { 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                background: none; 
+                border: none; 
+                font-size: 2rem; 
+                color: #1a1a1a; /* 👈 항상 까만색 유지 */
+                cursor: pointer; 
+                line-height: 0; /* 👈 글자 여백 제거 (핵심) */
+                padding: 0; 
+            } 
 
             /* 카드형 팝업 메뉴 */
             .nav-right {
