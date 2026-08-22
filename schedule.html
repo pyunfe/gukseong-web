@@ -15,6 +15,7 @@
 
         /* ================= 공통 레이아웃 ================= */
         .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 100px; background-color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; box-sizing: border-box; z-index: 1000; }
+        .nav-logo { display: flex; align-items: center; } 
         .nav-logo img { height: 80px; }
         
         /* PC 화면 햄버거 버튼 숨기기 */
@@ -87,6 +88,17 @@
         .schedule-desc-text { display: inline; }
         .no-time { display: none; } 
 
+        /* 💡 진짜 로그인 모달창 디자인 */
+        .login-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 10001; backdrop-filter: blur(3px); }
+        .login-modal { background: #fff; padding: 30px 25px; border-radius: 12px; width: 90%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; }
+        .login-modal h3 { margin: 0 0 20px 0; color: #1a1a1a; font-size: 1.5rem; font-weight: 800; }
+        .login-modal input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; font-family: 'Pretendard', sans-serif; box-sizing: border-box; }
+        .login-modal input:focus { border-color: #9e2a2b; outline: none; }
+        .login-modal button { width: 100%; padding: 12px; background: #9e2a2b; color: white; border: none; border-radius: 6px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: background 0.3s; margin-bottom: 10px; }
+        .login-modal button:hover { background: #7d2021; }
+        .login-modal .btn-close-modal { background: #eee; color: #555; }
+        .login-modal .btn-close-modal:hover { background: #ddd; }
+
         /* ================= 관리자 페이지 스타일 ================= */
         .admin-container { max-width: 800px; margin: 60px auto; padding: 40px; background-color: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eaeaea; display: none; position: relative; box-sizing: border-box;}
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #1a1a1a; padding-bottom: 15px; }
@@ -142,9 +154,9 @@
                 background: none; 
                 border: none; 
                 font-size: 2rem; 
-                color: #1a1a1a; /* 👈 항상 까만색 유지 */
+                color: #1a1a1a; 
                 cursor: pointer; 
-                line-height: 0; /* 👈 글자 여백 제거 (핵심) */
+                line-height: 0; 
                 padding: 0; 
             } 
 
@@ -181,11 +193,9 @@
             .calendar-table td { height: 65px; padding: 6px 2px; text-align: center; vertical-align: top; }
             .date-num { font-size: 0.9rem; margin-bottom: 4px; display: block; text-align: center; }
             
-            /* 💡 핵심: 텍스트는 숨기고 앙증맞은 동그라미 점으로 변경 */
             .schedule-desc-text { display: none; } 
             .no-time { display: none; } 
             
-            /* 💡 일정이 2개 이상이어도 첫 번째 동그라미 하나만 띄우기! */
             .calendar-table td .schedule-item { display: none; }
             .calendar-table td .schedule-item:first-of-type { 
                 display: inline-block; 
@@ -312,7 +322,10 @@
         
         <div class="admin-header">
             <h3>⚙️ 일정 관리자 모드</h3>
-            <button class="btn-back" id="closeAdminBtn">달력으로 돌아가기</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-back" id="closeAdminBtn">달력으로 돌아가기</button>
+                <button class="btn-back" id="btnLogoutBtn" style="background-color: #e53e3e;">로그아웃</button>
+            </div>
         </div>
         
         <div class="admin-form">
@@ -330,6 +343,17 @@
         </ul>
     </div>
 
+    <!-- 💡 진짜 로그인 모달 HTML -->
+    <div class="login-modal-overlay" id="loginModal">
+        <div class="login-modal">
+            <h3>보안 로그인</h3>
+            <input type="email" id="loginEmail" placeholder="관리자 이메일">
+            <input type="password" id="loginPassword" placeholder="비밀번호">
+            <button id="btnDoLogin">로그인</button>
+            <button class="btn-close-modal" id="btnCloseLogin">취소</button>
+        </div>
+    </div>
+
     <!-- 하단 푸터 -->
     <footer class="site-footer">
         <div class="footer-inner">
@@ -342,19 +366,15 @@
         </div>
     </footer>
 
-    <!-- 💡 일정 여러 개를 시간순으로 띄워주는 다중 팝업창 -->
+    <!-- 💡 다중 팝업창 -->
     <div id="schedulePopupOverlay" class="loading-overlay" style="background: rgba(0,0,0,0.6); z-index: 10001; backdrop-filter: blur(3px); position: fixed; flex-direction: column;">
         <div class="popup-content" style="background: #fff; padding: 25px; border-radius: 12px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
             <h4 id="popupDate" style="margin-top: 0; color: #9e2a2b; font-size: 1.2rem; margin-bottom: 20px; font-weight: 800; border-bottom: 2px solid #eee; padding-bottom: 10px;"></h4>
-            
-            <!-- 💡 이 안에 그날의 모든 일정이 차곡차곡 들어갑니다 -->
             <div id="popupDescContainer" style="max-height: 50vh; overflow-y: auto; margin-bottom: 20px; text-align: left;"></div>
-            
             <button onclick="closeSchedulePopup()" style="background: #1a1a1a; color: white; border: none; padding: 12px 0; width: 100%; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem; transition: background 0.3s;">닫기</button>
         </div>
     </div>
 
-    <!-- 달력 및 관리자 기능 스크립트 -->
     <script>
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
@@ -380,16 +400,13 @@
             }
         });
 
-        // 💡 팝업 열기 함수 업그레이드 (해당 날짜의 '모든' 일정을 배열로 받아서 그림)
         function showSchedulePopup(dateStr, dailySchedules) {
-            // 날짜 포맷 예쁘게 변경 (ex: 2026-08-15 -> 2026년 8월 15일)
             const dateParts = dateStr.split('-');
             document.getElementById('popupDate').textContent = `${dateParts[0]}년 ${parseInt(dateParts[1])}월 ${parseInt(dateParts[2])}일`;
             
             const container = document.getElementById('popupDescContainer');
-            container.innerHTML = ''; // 기존 내용 지우기
+            container.innerHTML = ''; 
             
-            // 배열 안에 있는 모든 일정을 하나씩 카드로 만들어서 추가
             dailySchedules.forEach(item => {
                 let div = document.createElement('div');
                 div.style.background = '#f8f9fa';
@@ -432,9 +449,17 @@
         const adminScheduleList = document.getElementById('adminScheduleList');
         const calendarLoading = document.getElementById('calendarLoading');
         const adminLoading = document.getElementById('adminLoading');
-
+        
+        let session = null; 
         let currentDate = new Date(2026, 7, 1); 
         let globalSchedules = []; 
+
+        // 💡 페이지 로드 시 세션 확인
+        async function checkSession() {
+            const { data: { session: currentSession } } = await _supabase.auth.getSession();
+            session = currentSession;
+            fetchSchedules(); // 세션 확인 후 달력 데이터를 불러옵니다.
+        }
 
         function initControls() {
             for (let i = 2024; i <= 2030; i++) {
@@ -511,7 +536,6 @@
                         let dateString = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
                         
                         if (schedulesObj[dateString]) {
-                            // 💡 시간 순서대로 정렬 (시간이 없으면 자동으로 맨 뒤로 이동)
                             schedulesObj[dateString].sort((a, b) => {
                                 let timeA = a.schedule_time || '24:00';
                                 let timeB = b.schedule_time || '24:00';
@@ -522,7 +546,6 @@
                                 let scheduleItem = document.createElement('div');
                                 scheduleItem.className = 'schedule-item';
                                 
-                                // 💡 동그라미를 누르면 해당 날짜의 '모든' 일정을 팝업으로 넘김
                                 scheduleItem.onclick = () => showSchedulePopup(dateString, schedulesObj[dateString]);
                                 
                                 let timeText = item.schedule_time ? `<span class="schedule-time">[${item.schedule_time}]</span>` : `<span class="schedule-time no-time">[일정]</span>`;
@@ -545,16 +568,63 @@
             renderCalendar(parseInt(yearSelect.value), parseInt(monthSelect.value));
         }
 
-        addScheduleBtn.addEventListener('click', () => {
-            const password = prompt("관리자 비밀번호를 입력해주세요.");
-            if (password === "8566") {
+        // 💡 로그인 모달 닫기
+        document.getElementById('btnCloseLogin').addEventListener('click', () => {
+            document.getElementById('loginModal').style.display = 'none';
+        });
+
+        // 💡 진짜 로그인 시도
+        document.getElementById('btnDoLogin').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if(!email || !password) {
+                alert("이메일과 비밀번호를 모두 입력해주세요.");
+                return;
+            }
+
+            const { data, error } = await _supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                alert("로그인 실패: 아이디나 비밀번호를 확인해주세요.");
+                console.error(error);
+            } else {
+                session = data.session;
+                document.getElementById('loginModal').style.display = 'none';
+                alert("관리자님, 환영합니다!");
+                
+                // 로그인 성공 시 달력을 숨기고 관리자 페이지 표시
                 calendarView.style.display = 'none';
                 adminView.style.display = 'block';
                 resetForm();
                 renderAdminList();
-            } else if (password !== null) {
-                alert("비밀번호가 일치하지 않습니다.");
             }
+        });
+
+        // 💡 일정 관리 버튼 클릭 시 (세션 확인)
+        addScheduleBtn.addEventListener('click', () => {
+            if (!session) {
+                // 로그인이 안 되어 있으면 모달창 띄우기
+                document.getElementById('loginModal').style.display = 'flex';
+            } else {
+                // 로그인이 되어 있으면 바로 관리자 페이지로
+                calendarView.style.display = 'none';
+                adminView.style.display = 'block';
+                resetForm();
+                renderAdminList();
+            }
+        });
+
+        // 💡 관리자 페이지 안에서 로그아웃
+        document.getElementById('btnLogoutBtn').addEventListener('click', async () => {
+            await _supabase.auth.signOut();
+            session = null;
+            adminView.style.display = 'none';
+            calendarView.style.display = 'block';
+            alert("로그아웃 되었습니다.");
         });
 
         closeAdminBtn.addEventListener('click', () => {
@@ -611,7 +681,7 @@
 
             } catch (err) {
                 console.error('일정 등록/수정 실패:', err);
-                alert("처리 중 오류가 발생했습니다. (테이블이 생성되었는지 확인해주세요.)");
+                alert("처리 중 오류가 발생했습니다. (보안 권한 문제일 수 있습니다.)");
             } finally {
                 adminLoading.style.display = 'none';
             }
@@ -669,7 +739,7 @@
                             renderAdminList();
                         } catch (err) {
                             console.error('삭제 실패:', err);
-                            alert("삭제 중 오류가 발생했습니다.");
+                            alert("삭제 중 오류가 발생했습니다. (보안 권한 문제일 수 있습니다.)");
                         } finally {
                             adminLoading.style.display = 'none';
                         }
@@ -685,8 +755,9 @@
             });
         }
 
+        // 초기화 실행
         initControls();
-        fetchSchedules(); 
+        checkSession(); // 💡 세션을 먼저 확인한 후 데이터를 불러옵니다.
     </script>
 </body>
 </html>
