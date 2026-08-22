@@ -444,7 +444,7 @@
                 line-height: 0; 
                 padding: 0; 
                 transition: color 0.3s ease; 
-} 
+            } 
             
             /* 스크롤 시 변하는 스타일 (흰색 배경) */
             .navbar.scrolled { height: 60px; background-color: rgba(255,255,255,0.98) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important; }
@@ -718,7 +718,7 @@
         });
 
         // ==========================================
-        // 💡 3. Supabase에서 알리미 데이터 불러오기 및 팝업 (기존과 동일)
+        // 💡 3. Supabase에서 알리미 데이터 불러오기 및 팝업 (알리미 페이지와 순서 완벽 일치)
         // ==========================================
         const SUPABASE_URL = 'https://haaiwbjdlqwrfrvsurxi.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhYWl3YmpkbHF3cmZydnN1cnhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MTQ1NjQsImV4cCI6MjEwMjA5MDU2NH0.hiMuLbrgkF2W_-PR5dfwmqI2TAOLi3yJv25_iCMovFE';
@@ -733,7 +733,7 @@
                 const { data, error } = await _supabase
                     .from('gukseong_alerts')
                     .select('*')
-                    .order('created_at', { ascending: false })
+                    .order('created_at', { ascending: true }) // 💡 알리미 페이지와 동일하게 오름차순(바꾼 순서) 적용!
                     .limit(3);
 
                 if (error) throw error;
